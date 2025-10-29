@@ -14,7 +14,11 @@
 <p-card>
     <div class="font-bold mb-1">Podsumowanie</div>
     
-    Numer zamówienia <span class="adres"><i class="pi pi-clone"></i> #1</span>
+        Numer zamówienia 
+        <span class="adres cursor-pointer" (click)="copyOrderNumber($event)"><i class="pi pi-clone"></i> #1</span>
+        <p-popover #copyPopover position="top">
+            <ng-template pTemplate="content">Skopiowano!</ng-template>
+        </p-popover>
 
     <p-table [value]="summary">
     
