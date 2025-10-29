@@ -1,0 +1,10 @@
+:host {
+    display: grid;
+    gap: 1.5rem;
+}
+
+@media (min-width: 720px) {
+    :host {
+        gap: 2rem;
+    }
+}

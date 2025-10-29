@@ -1,0 +1,14 @@
+img {
+    background-color: #fef5fd;
+    border-radius: 1rem;
+}
+
+:host {
+    display: grid;
+    gap: .5rem;
+    cursor: pointer;
+}
+
+.price {
+    font-size: larger;
+}

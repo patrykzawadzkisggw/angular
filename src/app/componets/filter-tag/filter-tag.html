@@ -1,0 +1,13 @@
+<div class="tag-container">
+
+    @for( tag of tags; track tag.label  ) {
+<p-chip 
+    
+    label="{{tag.label}}" 
+    [class.selected]="tag.selected"
+    (click)="toggleTag(tag)"
+    style="cursor: pointer; margin-right: 0.5rem; margin-bottom: 0.5rem;">
+  </p-chip>
+    }
+  
+</div>

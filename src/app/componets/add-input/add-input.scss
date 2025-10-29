@@ -1,0 +1,39 @@
+:host {
+	display: inline-block;
+	--ai-padding: 0.375rem; 
+	--ai-gap: 0.5rem;       
+	--ai-button-size: 2.25rem; 
+}
+
+.ai-control {
+	padding: var(--ai-padding);
+	gap: var(--ai-gap);
+}
+
+:host ::ng-deep .p-button {
+
+	min-width: var(--ai-button-size);
+	width: var(--ai-button-size);
+	height: var(--ai-button-size);
+	border-radius: 9999px; 
+	padding: 0; 
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+}
+
+.tabular-nums {
+	font-variant-numeric: tabular-nums;
+}
+
+.value {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: var(--ai-button-size);
+	height: var(--ai-button-size);
+}
+.component {
+    background-color: #f7f8f7;
+}

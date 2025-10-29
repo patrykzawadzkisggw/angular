@@ -1,0 +1,25 @@
+<div class="ai-control inline-flex items-center rounded-full  border-surface-200 dark:border-surface-700  dark:bg-surface-900 select-none component">
+	<p-button
+    class="bg-white rounded-full"
+		[rounded]="true"
+		[text]="true"
+		[severity]="'secondary'"
+		[disabled]="value <= 0"
+		[icon]="value > 1 ? 'pi pi-minus' : 'pi pi-trash'"
+		(onClick)="decreaseOrRemove()"
+		aria-label="Zmniejsz lub usuń"
+	/>
+
+	<span class="value text-center font-medium tabular-nums">{{ value }}</span>
+
+	<p-button
+		[rounded]="true"
+		[text]="false"
+		[raised]="true"
+		[severity]="'success'"
+		icon="pi pi-plus"
+		(onClick)="increase()"
+		[disabled]="max !== undefined && value >= max"
+		aria-label="Zwiększ"
+	/>
+</div>

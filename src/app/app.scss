@@ -1,0 +1,22 @@
+
+:host {
+	min-height: 100dvh; 
+	display: grid;
+	grid-template-rows: 1fr auto; 
+}
+
+
+.page {
+	width: 100%;
+}
+
+footer {
+    margin: 2rem 0;
+    text-align: center;
+}
+
+@media(min-width: 720px) {
+    footer {
+        text-align: left;
+    }
+}   

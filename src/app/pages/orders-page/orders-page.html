@@ -1,1 +1,9 @@
-<p>orders-page works!</p>
+<h1 class="mt-2 text-4xl font-semibold tracking-tight text-pretty sm:text-5xl">Zamówienia</h1>
+<app-filter-tag [tagsList]="tags"/>
+
+<div class="grid gap-5">
+@for(tag of tags; track tag) {
+    <app-orders-item/>
+}
+</div>
+

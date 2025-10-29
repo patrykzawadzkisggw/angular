@@ -1,1 +1,83 @@
-<p>order-detail-page works!</p>
+<div class="flex justify-between items-center">
+<h1 class="mt-2 text-4xl font-semibold tracking-tight text-pretty sm:text-5xl">Szczegóły</h1>
+<p-tag severity="info" value="W realizacji" [rounded]="true" />
+</div>
+
+
+
+<p-card>
+    <div class="font-bold mb-1">Adres Dostawy</div>
+    <span class="adres"><i class="pi pi-map-marker"></i> Kwiatowa 15/3, 00-001 Warszawa</span>
+    
+</p-card>
+
+<p-card>
+    <div class="font-bold mb-1">Podsumowanie</div>
+    
+    Numer zamówienia <span class="adres"><i class="pi pi-clone"></i> #1</span>
+
+    <p-table [value]="summary">
+    
+
+    <ng-template pTemplate="body" let-product>
+        <tr>
+            <td style="padding: 0; border:none">
+                
+                   
+                        <span class="block name" [class.font-bold]="product.isBold">{{ product.label }}</span>
+                  
+            </td>
+            <td style="width: 1%; white-space: nowrap; text-align: right;border:none">
+                <span [class.font-bold]="product.isBold">{{ product.value }} zł</span>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+</p-card>
+
+<p-card> 
+    <p-table [value]="products">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Produkty</th>
+            <th style="width: 1%; white-space: nowrap; text-align: right;">Ilość</th>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-product>
+        <tr>
+            <td style="padding-left: 0;padding-right: 0;">
+                <div class="prod cursor-pointer" routerLink="/product/1">
+                    <div class="colA"><img [src]="product.img" alt=""></div>
+                    <div class="colB">
+                        <span class="block name">{{ product.name }}</span>
+                        <span class="block price">{{ product.price }} zł</span>
+                    </div>
+                </div>
+            </td>
+            <td style="width: 1%; white-space: nowrap; text-align: right;">
+                {{ product.quantity }}
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+</p-card>
+
+<p-button (click)="showDialog()" label="Anuluj zamówienie" />
+
+<p-dialog 
+    header="Anuluj zamówienie" 
+    [modal]="true" 
+    [(visible)]="visible" 
+    [style]="{ width: '25rem' }">
+
+    <span class="p-text-secondary block mb-8">
+        Czy na pewno chcesz anulować zamówienie?
+    </span>
+
+    <div class="flex justify-end gap-2">
+        <p-button label="Nie" severity="secondary" (click)="visible = false" />
+        <p-button label="Tak" severity="danger" (click)="cancelOrder()" />
+    </div>
+</p-dialog>

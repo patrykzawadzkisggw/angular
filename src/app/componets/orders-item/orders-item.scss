@@ -1,0 +1,102 @@
+
+$primary: #fef5fd;
+$black-600: #686069;
+$text-primary: #b6349a;
+
+.card {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto auto auto auto;
+    gap: 1rem;
+    grid-template-areas:
+        "order status"
+        "price items"
+        "gallery gallery"
+        "details details";
+
+    font-family: "DM Sans", sans-serif;
+
+}
+
+.order {
+    grid-area: order;
+
+}
+.price {
+    grid-area: price;
+
+}
+.status {
+    grid-area: status;
+    justify-self: end;
+
+}
+.gallery {
+    grid-area: gallery;
+    background-color: $primary;
+    border-radius: .5rem;
+    padding: 1rem;
+    display: flex;
+    gap: 1rem;
+    overflow-x: hidden;
+    img {
+        background-color: white;
+        border-radius: .5rem;
+        height: 50px;
+    }
+
+}
+.items {
+    grid-area: items;
+
+}
+.details {
+    grid-area: details;
+    color: $text-primary;
+    font-weight: bold;
+    span:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+}
+
+.price, .items {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    img {
+        background-color: $primary;
+    border-radius: 100%;
+    padding: .5rem;
+    }
+
+}
+
+.title {
+    font-weight: bold;
+    display: block;
+}
+
+.b600 {
+    color: $black-600;
+}
+
+@media (min-width: 720px) {
+    .card {
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: auto auto;
+        gap: 1rem;
+        grid-template-areas:
+            "order price items status details"
+            "gallery gallery gallery gallery gallery";
+    }
+
+    .status {
+    justify-self: center;
+
+}
+.details {
+    justify-self: end;
+}
+}

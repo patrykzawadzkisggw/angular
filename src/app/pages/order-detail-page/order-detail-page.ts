@@ -1,11 +1,40 @@
 import { Component } from '@angular/core';
-
+import { CardModule } from 'primeng/card';
+import { TagModule } from 'primeng/tag';
+import { TableModule } from 'primeng/table';
+import { Router, RouterLink } from "@angular/router";
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
 @Component({
   selector: 'app-order-detail-page',
-  imports: [],
+  imports: [CardModule, TagModule, TableModule, RouterLink, ButtonModule, DialogModule],
   templateUrl: './order-detail-page.html',
   styleUrl: './order-detail-page.scss'
 })
 export class OrderDetailPage {
+products = [
+    { id: 1, name: 'Produkt A', quantity: 2, price: 50, img: 'orange.png' },
+    { id: 2, name: 'Produkt B', quantity: 1, price: 100, img: 'orange.png' },
+    { id: 3, name: 'Produkt C', quantity: 3, price: 30, img: 'orange.png' },
+    { id: 4, name: 'Produkt D', quantity: 2, price: 70, img: 'orange.png' },
+]
 
+summary = [
+    { label: 'Produkty', value: 330, isBold:false },
+     { label: 'Dostawa', value: 0, isBold:false },
+      { label: 'Razem', value: 330, isBold:true },
+]
+
+visible: boolean = false;
+
+  constructor(private router: Router) {}
+
+  showDialog() {
+    this.visible = true;
+  }
+
+  cancelOrder() {
+    this.visible = false;
+    this.router.navigate(['/status']);
+  }
 }

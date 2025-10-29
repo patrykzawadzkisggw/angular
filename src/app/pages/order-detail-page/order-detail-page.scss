@@ -1,0 +1,31 @@
+.prod {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: auto 1fr;
+
+    img {
+        background-color: #f7f8f7;
+        border-radius: .5rem;
+        height: 40px;
+    }
+
+    .colB {
+        display: flex;
+        flex-direction: column;
+       justify-content: space-between;
+
+       .name {
+            font-weight: bold;
+        }
+
+    }
+}
+
+:host {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.adres {
+    color: #b6349a;
+}
