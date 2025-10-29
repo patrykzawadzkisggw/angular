@@ -1,0 +1,12 @@
+.nav-pill {
+	border-radius: 9999px !important;
+	border-color: #f3f4f6 !important; 
+}
+
+
+:host ::ng-deep .p-inputtext:focus,
+:host ::ng-deep input.p-inputtext:focus {
+	box-shadow: none !important;
+	border-color: #f3f4f6 !important;
+	outline: none !important;
+}

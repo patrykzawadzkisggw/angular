@@ -1,0 +1,79 @@
+<nav class="fixed top-0 inset-x-0 z-50 bg-gray-50/95 backdrop-blur border-b border-gray-100">
+	<div class="mx-auto max-w-7xl px-3 sm:px-4">
+		<!-- Mobile bar -->
+			<div class="flex h-[4.5rem] items-center justify-between md:hidden">
+				<button type="button" pButton class="p-button-text" (click)="openMobileMenu()" aria-label="Menu">
+				<i class="pi pi-bars text-xl"></i>
+			</button>
+
+			<form class="flex-1 mx-3" (ngSubmit)="onSearch()">
+				<label for="q" class="sr-only">Szukaj</label>
+				<div class="relative">
+		      <input id="q" pInputText type="text" [(ngModel)]="query" name="q" placeholder="Szukaj..."
+			      class="nav-pill w-full h-14 rounded-full pl-4 pr-16 bg-white border border-gray-100 focus:outline-none focus:border-gray-100 focus:ring-0 focus:shadow-none shadow-sm" />
+		    <button type="submit" aria-label="Szukaj"
+			    class="absolute right-2.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-violet-50 hover:bg-violet-100 active:bg-violet-200 transition flex items-center justify-center shadow">
+						<i class="pi pi-search text-violet-600 text-sm"></i>
+					</button>
+				</div>
+			</form>
+
+			<a routerLink="/cart" class="relative flex items-center gap-1 rounded-full border-2 border-violet-100 bg-white px-3 py-1" aria-label="Koszyk">
+				<i class="pi pi-shopping-cart text-violet-600 text-base"></i>
+				<span class="text-violet-600 text-sm font-semibold">{{ (cartCount$ | async) ?? 0 }}</span>
+			</a>
+		</div>
+
+		<!-- Desktop bar -->
+		<div class="hidden md:flex h-[4.5rem] items-center justify-between">
+			<!-- Left: logo -->
+			<a routerLink="" class="font-semibold text-lg">LOGO</a>
+
+			<!-- Center: search -->
+			<form class="flex-1 max-w-2xl mx-6" (ngSubmit)="onSearch()">
+				<label for="q_desktop" class="sr-only">Szukaj produktów</label>
+				<div class="relative">
+		      <input id="q_desktop" pInputText type="text" [(ngModel)]="query" name="q_desktop" placeholder="Szukaj produktów..."
+			      class="nav-pill w-full h-14 rounded-full pl-5 pr-16 bg-white border border-gray-100 focus:outline-none focus:border-gray-100 focus:ring-0 focus:shadow-none shadow-sm" />
+		    <button type="submit" aria-label="Szukaj"
+			    class="absolute right-2.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-violet-50 hover:bg-violet-100 active:bg-violet-200 transition flex items-center justify-center shadow">
+						<i class="pi pi-search text-violet-600 text-sm"></i>
+					</button>
+				</div>
+			</form>
+
+			<!-- Right: cart + profile/menu -->
+			<div class="flex items-center gap-3">
+				<a routerLink="/cart" class="inline-flex items-center rounded-full border-2 border-violet-100 bg-violet-100 pl-1 pr-2 py-1" aria-label="Koszyk">
+					<span class="flex items-center gap-1 rounded-full bg-white px-3 py-1">
+						<i class="pi pi-shopping-cart text-violet-600 text-base"></i>
+						<span class="text-violet-600 text-sm font-semibold">{{ (cartCount$ | async) ?? 0 }}</span>
+					</span>
+					<span class="ml-2 text-black text-sm font-medium">Koszyk</span>
+				</a>
+				<button type="button" pButton icon="pi pi-ellipsis-v" class="p-button-text" (click)="toggleProfileMenu($event)" aria-label="Menu"></button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Desktop profile/menu -->
+	<p-menu #profileMenu [model]="items" [popup]="true"></p-menu>
+</nav>
+
+	<!-- Fullscreen mobile menu overlay -->
+	 @if(mobileMenuOpen) {
+	<div  class="fixed inset-0 z-[60] bg-white">
+		<div class="flex items-center justify-between h-[4.5rem] px-4 border-b border-gray-100">
+			<span class="font-semibold text-lg">Menu</span>
+			<button type="button" pButton class="p-button-text" (click)="closeMobileMenu()" aria-label="Zamknij">
+				<i class="pi pi-times text-xl"></i>
+			</button>
+		</div>
+
+		<div class="p-4 space-y-3">
+			<a routerLink="" (click)="closeMobileMenu()" pButton label="Strona główna" icon="pi pi-home" class="w-full"></a>
+			<a routerLink="/orders" (click)="closeMobileMenu()" pButton label="Zamówienia" icon="pi pi-list" class="w-full"></a>
+			<button type="button" pButton label="Wyloguj" icon="pi pi-sign-out" class="w-full p-button-danger" (click)="logout(); closeMobileMenu()"></button>
+		</div>
+	</div>
+}
