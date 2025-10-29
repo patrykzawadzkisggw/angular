@@ -12,6 +12,8 @@ import { AddInput } from '../../componets/add-input/add-input';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { InputOtpModule } from 'primeng/inputotp';
 import { ProductLink } from '../../componets/product-link/product-link';
+import { CartService, CartItem } from '../../services/cart-service';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-cart-page',
@@ -20,13 +22,24 @@ import { ProductLink } from '../../componets/product-link/product-link';
   styleUrl: './cart-page.scss'
 })
 export class CartPage {
-  constructor(private router: Router) {}
-products = [
-    { id: 1, name: 'Produkt A', quantity: 2, price: 50, img: 'orange.png' },
-    { id: 2, name: 'Produkt B', quantity: 1, price: 100, img: 'orange.png' },
-    { id: 3, name: 'Produkt C', quantity: 3, price: 30, img: 'orange.png' },
-    { id: 4, name: 'Produkt D', quantity: 2, price: 70, img: 'orange.png' },
-]
+  cartItems$!: Observable<CartItem[]>;
+  amounts$!: Observable<{ subtotal: number; shipping: number; grandTotal: number; progress: number; missing: number }>;
+  readonly freeShippingThreshold = 300;
+  readonly shippingBelowThreshold = 15;
+
+  constructor(private router: Router, private cart: CartService) {
+    this.cartItems$ = this.cart.items$;
+    this.amounts$ = this.cartItems$.pipe(
+      map(items => {
+        const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+        const missing = Math.max(0, this.freeShippingThreshold - subtotal);
+        const progress = Math.min(100, (subtotal / this.freeShippingThreshold) * 100) || 0;
+        const shipping = subtotal >= this.freeShippingThreshold ? 0 : this.shippingBelowThreshold;
+        const grandTotal = subtotal + shipping;
+        return { subtotal, shipping, grandTotal, progress, missing };
+      })
+    );
+  }
 
   showCouponDialog = false;
   showInvalidCouponDialog = false;
@@ -60,5 +73,13 @@ products = [
     } else if (value === 2) {
       this.router.navigateByUrl('/delivery');
     }
+  }
+
+  onQuantityChange(productId: number, qty: number) {
+    this.cart.updateQuantity(productId, qty);
+  }
+
+  onRemove(productId: number) {
+    this.cart.removeItem(productId);
   }
 }

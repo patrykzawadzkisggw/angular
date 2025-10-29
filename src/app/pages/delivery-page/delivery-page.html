@@ -10,34 +10,68 @@
     </p-stepper>
 
     <p-card class="delivery-card w-full md:col-start-1 md:row-start-2">
-        <div class="delivery-form grid gap-4 grid-cols-1 md:grid-cols-2">
-            <p-iftalabel class="w-full">
-                <input pInputText id="firstname" autocomplete="off" class="w-full" />
-                <label for="firstname">Imie</label>
-            </p-iftalabel>
+        <form [formGroup]="form" class="delivery-form grid gap-4 grid-cols-1 md:grid-cols-2" (ngSubmit)="placeOrder()">
+            <div class="w-full">
+              <p-iftalabel class="w-full">
+                  <input pInputText id="firstname" formControlName="firstname" autocomplete="off" class="w-full" />
+                  <label for="firstname">Imię</label>
+              </p-iftalabel>
+              @if(showErrors && form.get('firstname')?.invalid) {
+                <small class="text-red-600">Niepoprawne imię</small>
+              }
+            </div>
 
-            <p-iftalabel class="w-full">
-                <input pInputText id="lastname" autocomplete="off" class="w-full" />
-                <label for="lastname">Nazwisko</label>
-            </p-iftalabel>
+            <div class="w-full">
+              <p-iftalabel class="w-full">
+                  <input pInputText id="lastname" formControlName="lastname" autocomplete="off" class="w-full" />
+                  <label for="lastname">Nazwisko</label>
+              </p-iftalabel>
+              @if(showErrors && form.get('lastname')?.invalid) {
+                <small class="text-red-600">Niepoprawne nazwisko</small>
+              }
+            </div>
 
-            <p-iftalabel class="w-full">
-                <input pInputText id="postcode" autocomplete="off" class="w-full" />
-                <label for="postcode">Kod pocztowy</label>
-            </p-iftalabel>
+            <div class="w-full">
+              <p-iftalabel class="w-full">
+                  <input pInputText id="postcode" formControlName="postcode" autocomplete="off" class="w-full" placeholder="12-345" />
+                  <label for="postcode">Kod pocztowy</label>
+              </p-iftalabel>
+              @if(showErrors && form.get('postcode')?.invalid) {
+                <small class="text-red-600">Niepoprawny kod pocztowy</small>
+              }
+            </div>
 
-            <p-iftalabel class="w-full">
-                <input pInputText id="city" autocomplete="off" class="w-full" />
-                <label for="city">Miasto</label>
-            </p-iftalabel>
+            <div class="w-full">
+              <p-iftalabel class="w-full">
+                  <input pInputText id="city" formControlName="city" autocomplete="off" class="w-full" />
+                  <label for="city">Miasto</label>
+              </p-iftalabel>
+              @if(showErrors && form.get('city')?.invalid) {
+                <small class="text-red-600">Niepoprawne miasto</small>
+              }
+            </div>
 
-            <p-iftalabel class="w-full md:col-span-2">
-                <input pInputText id="adres" autocomplete="off" class="w-full" />
-                <label for="adres">Ulica i numer domu/mieszkania</label>
-            </p-iftalabel>
+            <div class="w-full md:col-span-2">
+              <p-iftalabel class="w-full">
+                  <input pInputText id="adres" formControlName="adres" autocomplete="off" class="w-full" />
+                  <label for="adres">Ulica i numer domu/mieszkania</label>
+              </p-iftalabel>
+              @if(showErrors && form.get('adres')?.invalid) {
+                <small class="text-red-600">Niepoprawny adres</small>
+              }
+            </div>
 
-            <p-button label="Zamów 29.99zł" routerLink="/status" class="w-full md:col-span-2" styleClass="w-full" />
-        </div>
+            <div class="md:col-span-2 grid gap-2">
+              @if (showCartEmptyError) {
+                <div class="text-red-600">Koszyk jest pusty. Dodaj produkty, aby złożyć zamówienie.</div>
+              }
+        <button pButton
+          type="submit"
+          [label]="'Zamów ' + ((((amounts$ | async)?.grandTotal ?? 0) | number:'1.2-2')) + ' zł'"
+          class="w-full"
+          styleClass="w-full"></button>
+            </div>
+        </form>
     </p-card>
 
 </div>

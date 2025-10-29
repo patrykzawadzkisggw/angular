@@ -1,6 +1,7 @@
 
 
 
+@if (((cartItems$ | async)?.length || 0) > 0) {
 <div class="cart-layout space-y-4 md:grid md:grid-cols-[1fr_300px] md:gap-4 md:space-y-0">
     <p-stepper [value]="1" class="md:col-span-1" (valueChange)="onStepChange($event)">
         <p-step-list>
@@ -12,12 +13,12 @@
     <p-card class="cart-card w-full md:col-start-1 md:row-start-2">
         <div class="cart-card__heading text-xl font-semibold mb-3">Koszyk</div>
 
-        <p-table [value]="products">
+    <p-table [value]="(cartItems$ | async) || []">
             <ng-template pTemplate="body" let-product>
                 <tr>
                     <td style="padding-left: 0; padding-right: 0;">
-                        <div class="md:grid md:grid-cols-[1fr_auto] md:gap-4">
-                            <a class="flex gap-4 cursor-pointer" routerLink="/product/1">
+                        <div class="[@media(min-width:900px)]:grid [@media(min-width:900px)]:grid-cols-[1fr_auto] [@media(min-width:900px)]:gap-4">
+                            <a class="flex gap-4 cursor-pointer" [routerLink]="'/product/'+product.id">
                                 <div>
                                     <img [src]="product.img" [alt]="product.name" class="bg-[#f7f8f7] rounded h-10 md:h-[60px]" />
                                 </div>
@@ -27,11 +28,15 @@
                                 </div>
                             </a>
 
-                            <div class="cart-item__actions flex items-center gap-4 mt-4 md:mt-0 md:w-[230px]">
-                                <div class="cart-item__total font-medium md:order-3 md:ml-auto">{{ product.quantity * product.price }} zł</div>
-                                <div class="flex-1 md:hidden"></div>
-                                <div class="cart-item__remove text-red-500 cursor-pointer hover:underline md:order-2">Usuń</div>
-                                <app-add-input class="num md:order-1" />
+                            <div class="cart-item__actions flex items-center gap-4 mt-4 [@media(min-width:900px)]:mt-0 [@media(min-width:900px)]:w-[230px]">
+                                <div class="cart-item__total font-medium [@media(min-width:900px)]:order-3 [@media(min-width:900px)]:ml-auto">{{ product.quantity * product.price }} zł</div>
+                                <div class="flex-1 [@media(min-width:900px)]:hidden"></div>
+                                <div class="cart-item__remove text-red-500 cursor-pointer hover:underline [@media(min-width:900px)]:order-2" (click)="onRemove(product.id)">Usuń</div>
+                                <app-add-input class="num [@media(min-width:900px)]:order-1"
+                                               [value]="product.quantity"
+                                               [min]="0"
+                                               (valueChange)="onQuantityChange(product.id, $event)"
+                                               (removed)="onRemove(product.id)" />
                             </div>
                         </div>
                     </td>
@@ -39,9 +44,13 @@
             </ng-template>
         </p-table>
 
-        <div class="cart-card__footer grid gap-4 mt-3 md:hidden">
-            <p-progressbar [value]="50" />
-            <div>Do darmowej dostawy brakuje 3 zł.</div>
+                <div class="cart-card__footer grid gap-4 mt-3 md:hidden">
+                        <p-progressbar [value]="(amounts$ | async)?.progress || 0" />
+                        @if (((amounts$ | async)?.missing || 0) > 0) {
+                            <div>Do darmowej dostawy brakuje {{ (amounts$ | async)?.missing | number:'1.0-0' }} zł.</div>
+                        } @else {
+                            <div class="text-green-600">Darmowa dostawa!</div>
+                        }
             @if (!discountApplied) {
                 <div class="flex items-center w-full">
                     <div>kupon</div>
@@ -50,15 +59,20 @@
             } @else {
                 <div class="text-green-600">Zniżka 10%</div>
             }
-            <p-button label="Zamów 29.99zł" routerLink="/delivery" class="w-full" styleClass="w-full" />
+            <p-button [label]="'Zamów ' + ((((amounts$ | async)?.grandTotal ?? 0) | number:'1.2-2')) + ' zł'"
+                      routerLink="/delivery" class="w-full" styleClass="w-full" />
         </div>
     </p-card>
 
     <div class="hidden md:block md:self-center md:col-start-2 md:row-start-2">
         <p-card class="w-full">
             <div class="grid gap-4 w-full">
-                <p-progressbar [value]="50" />
-                <div>Do darmowej dostawy brakuje 3 zł.</div>
+                            <p-progressbar [value]="(amounts$ | async)?.progress || 0" />
+                                    @if (((amounts$ | async)?.missing || 0) > 0) {
+                                        <div>Do darmowej dostawy brakuje {{ (amounts$ | async)?.missing | number:'1.0-0' }} zł.</div>
+                                    } @else {
+                                        <div class="text-green-600">Darmowa dostawa!</div>
+                                    }
                 @if (!discountApplied) {
                     <div class="flex items-center w-full">
                         <div>kupon</div>
@@ -67,7 +81,8 @@
                 } @else {
                     <div class="text-green-600">Zniżka 10%</div>
                 }
-                <p-button label="Zamów 29.99zł" routerLink="/delivery" class="w-full" styleClass="w-full" />
+                <p-button [label]="'Zamów ' + ((((amounts$ | async)?.grandTotal ?? 0) | number:'1.2-2')) + ' zł'"
+                          routerLink="/delivery" class="w-full" styleClass="w-full" />
             </div>
         </p-card>
     </div>
@@ -77,7 +92,7 @@
 <section class="recommendations mt-24">
     <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 ">Rekomendacje</h2>
     <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-5 p-5">
-        @for(product of products; track product.name) {
+        @for(product of (cartItems$ | async); track product.name) {
         <app-product-link routerLink="/product/1"/>
     }
     </div>
@@ -102,6 +117,15 @@
         </div>
     </div>
 </p-dialog>
+} @else {
+    <p-card class="w-full">
+        <div class="text-center py-10">
+            <div class="text-2xl font-semibold mb-2">Twój koszyk jest pusty</div>
+            <div class="text-gray-600 mb-6">Dodaj produkty, aby kontynuować.</div>
+            <p-button label="Przeglądaj" routerLink="/" />
+        </div>
+    </p-card>
+}
 
 <!-- niepoprawny kupon -->
 <p-dialog
