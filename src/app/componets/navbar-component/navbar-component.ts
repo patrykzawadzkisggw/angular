@@ -9,6 +9,7 @@ import { BadgeModule } from 'primeng/badge';
 import { Menu } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { CartService } from '../../services/cart-service';
+import { AuthService } from '../../services/auth-service';
 import { map, Observable } from 'rxjs';
 
 @Component({
@@ -33,7 +34,7 @@ export class NavbarComponent {
 
   @ViewChild('profileMenu') profileMenu!: Menu;
 
-  constructor(private router: Router, private cart: CartService) {}
+  constructor(private router: Router, private cart: CartService, private auth: AuthService) {}
 
   ngOnInit() {
     this.items = [
@@ -57,8 +58,25 @@ export class NavbarComponent {
     this.router.navigate(['']);
   }
 
+  isLoggedIn(): boolean {
+    return this.auth.isLoggedIn();
+  }
+
+  quickLogin() {
+    this.auth.login('test@test.pl', 'tvQOXz@KARHzl9gmO').subscribe({
+      next: () => {
+      },
+      error: () => {
+
+      }
+    });
+  }
+
   logout() {
-    this.router.navigate(['/login']);
+    this.auth.logout().subscribe({
+      next: () => this.router.navigate(['/login']),
+      error: () => this.router.navigate(['/login'])
+    });
   }
 
   toggleProfileMenu(event: Event) {

@@ -10,6 +10,7 @@ import { StatusPage } from './pages/status-page/status-page';
 import { OrderDetailPage } from './pages/order-detail-page/order-detail-page';
 import { ProductPage } from './pages/product-page/product-page';
 import { NotFoundPage } from './pages/not-found-page/not-found-page';
+import { authGuard } from './guards/auth.guard';
 
 
 export const routes: Routes = [
@@ -17,13 +18,13 @@ export const routes: Routes = [
     {path: 'home', redirectTo: ''},
     {path: 'index', redirectTo: ''},
     {path: 'cart', component: CartPage},
-    {path: 'delivery', component: DeliveryPage},
+    {path: 'delivery', component: DeliveryPage, canActivate: [authGuard]},
     {path: 'login', component: LoginPage},
     {path: 'register', component: RegisterPage},
     {path: 'search', component: SearchPage},
-    {path: 'orders', component: OrdersPage},
-    {path: 'status', component: StatusPage},
-    {path: 'orders/:id', component: OrderDetailPage},
+    {path: 'orders', component: OrdersPage, canActivate: [authGuard]},
+    {path: 'status', component: StatusPage, canActivate: [authGuard]},
+    {path: 'orders/:id', component: OrderDetailPage, canActivate: [authGuard]},
     {path: 'product/:id', component: ProductPage},
     {path: '**', component: NotFoundPage},
 ];
