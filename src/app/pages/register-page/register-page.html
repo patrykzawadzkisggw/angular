@@ -1,1 +1,47 @@
-<p>register-page works!</p>
+<p-card header="Rejestracja" class="max-w-96 mx-auto mt-32">
+    <form class="flex flex-col gap-6 pt-3" [formGroup]="registerForm">
+
+        <div class="flex flex-col gap-1">
+            <p-floatlabel variant="in">
+                <input type="text" pInputText id="username" formControlName="username" fluid
+                    [invalid]="isInvalid('username')" />
+                <label for="username">Nazwa użytkownika</label>
+            </p-floatlabel>
+            @if (isInvalid('username')) {
+            <p-message severity="error" size="small" variant="simple">Pole wymagane.</p-message>
+            }
+        </div>
+        <div class="flex flex-col gap-1">
+            <p-floatlabel variant="in">
+                <input type="password" pInputText id="password" formControlName="password" fluid
+                    [invalid]="isInvalid('password')" />
+                <label for="password">Hasło</label>
+            </p-floatlabel>
+            @if (isInvalid('password')) {
+            <p-message severity="error" size="small" variant="simple">Pole wymagane.</p-message>
+            }
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <p-floatlabel variant="in">
+                <input type="password" pInputText id="confirmPassword" formControlName="confirmPassword" fluid
+                    [invalid]="isInvalid('confirmPassword')" />
+                <label for="confirmPassword">Potwierdź hasło</label>
+            </p-floatlabel>
+            @if (isInvalid('confirmPassword')) {
+            @if (registerForm.get('confirmPassword')?.errors?.['required']) {
+            <p-message severity="error" size="small" variant="simple">Pole wymagane.</p-message>
+            }
+            }
+            @if (registerForm.get('confirmPassword')?.hasError('passwordMismatch')
+            && registerForm.get('confirmPassword')?.touched) {
+            <p-message severity="error" size="small" variant="simple">Hasła nie są takie same.</p-message>
+            }
+        </div>
+
+        <button pButton type="button" label="Stwórz konto" (click)="register()"
+            [disabled]="registerForm.invalid && registerForm.touched">
+        </button>
+
+    </form>
+</p-card>
