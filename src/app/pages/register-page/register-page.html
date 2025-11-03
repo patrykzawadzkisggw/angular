@@ -38,10 +38,16 @@
             <p-message severity="error" size="small" variant="simple">Hasła nie są takie same.</p-message>
             }
         </div>
-
-        <button pButton type="button" label="Stwórz konto" (click)="register()"
-            [disabled]="registerForm.invalid && registerForm.touched">
+        @if (formError) {
+        <p-message severity="error" variant="simple" class="mt-2 mx-auto">
+            {{ formError }}
+        </p-message>
+        }
+        <button pButton type="button" label="Stwórz konto" (click)="register()">
         </button>
-
+        <div class="flex items-center mx-auto gap-0">
+            <p-message severity="secondary" variant="simple" class="mx-auto"> Masz już konto? </p-message>
+            <p-button label="Zaloguj się" link (onClick)="navigateLogin()"/>
+        </div>
     </form>
 </p-card>

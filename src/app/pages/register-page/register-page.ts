@@ -46,9 +46,16 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
   templateUrl: './register-page.html',
 })
 export class RegisterPage {
+  formError: string | null = null;
+
   constructor(private auth: AuthService, private router: Router) {}
   isInvalid(controlName: string): boolean {
     const control = this.registerForm.get(controlName);
+    this.registerForm.valueChanges.subscribe(() => {
+      if (this.formError) {
+        this.formError = null;
+      }
+    });
     return !!control && control.invalid && control.touched;
   }
   registerForm = new FormGroup(
@@ -61,6 +68,8 @@ export class RegisterPage {
   );
 
   register() {
+    this.formError = null;
+
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       return;
@@ -76,7 +85,12 @@ export class RegisterPage {
       },
       error: (err) => {
         console.error('Register error:', err);
+        this.formError = err.error?.error ?? 'Nieprawidłowe dane logowania.';
       },
     });
+  }
+
+  navigateLogin() {
+    this.router.navigate(['/login']);
   }
 }

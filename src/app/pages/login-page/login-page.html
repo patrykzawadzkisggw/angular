@@ -2,12 +2,11 @@
     <form class="flex flex-col gap-6 pt-3" [formGroup]="loginForm">
         <div class="flex flex-col gap-1">
             <p-floatlabel variant="in">
-                <input type="text" pInputText id="username" formControlName="username" fluid
-                    [invalid]="isInvalid('username')" />
-                <label for="username">Nazwa użytkownika</label>
+                <input type="text" pInputText id="login" formControlName="login" fluid [invalid]="isInvalid('login')" />
+                <label for="login">Nazwa użytkownika</label>
             </p-floatlabel>
 
-            @if (isInvalid('username')) {
+            @if (isInvalid('login')) {
             <p-message severity="error" size="small" variant="simple">Pole wymagane.</p-message>
             }
         </div>
@@ -22,10 +21,15 @@
             <p-message severity="error" size="small" variant="simple">Pole wymagane.</p-message>
             }
         </div>
-
-        <button pButton type="button" label="Zaloguj" (click)="login()"
-            [disabled]="loginForm.invalid && loginForm.touched">
-        </button>
-
+        @if (formError) {
+        <p-message severity="error" variant="simple" class="mt-2 mx-auto">
+            {{ formError }}
+        </p-message>
+        }
+        <button pButton type="button" label="Zaloguj" (click)="login()"></button>
+        <div class="flex items-center mx-auto gap-0">
+            <p-message severity="secondary" variant="simple" class="mx-auto"> Nie masz jeszcze konta? </p-message>
+            <p-button label="Stwórz konto" link (onClick)="navigateRegister()" />
+        </div>
     </form>
 </p-card>

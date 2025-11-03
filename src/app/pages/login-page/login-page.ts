@@ -28,37 +28,49 @@ import { AuthService } from '../../services/auth-service';
   templateUrl: './login-page.html',
 })
 export class LoginPage {
-  isInvalid(controlName: string): boolean {
-    const control = this.loginForm.get(controlName);
-    return !!control && control.invalid && control.touched;
-  }
+  formError: string | null = null;
 
   constructor(private auth: AuthService, private router: Router) {}
 
+  isInvalid(controlName: string): boolean {
+    const control = this.loginForm.get(controlName);
+    this.loginForm.valueChanges.subscribe(() => {
+      if (this.formError) {
+        this.formError = null;
+      }
+    });
+    return !!control && control?.invalid && (control.dirty || control.touched);
+  }
   loginForm = new FormGroup({
-    username: new FormControl('', Validators.required),
+    login: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
   });
 
   login() {
+    this.formError = null;
+
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
 
-    const { username, password } = this.loginForm.value;
+    const { login, password } = this.loginForm.value;
 
-    if (!username || !password) return;
+    if (!login || !password) return;
 
-    this.auth.login(username, password).subscribe({
+    this.auth.login(login, password).subscribe({
       next: () => {
         this.router.navigate(['/']);
         console.log('success');
       },
       error: (err) => {
         console.error('Login error:', err);
-        console.error('Error route hit');
+        this.formError = err.error?.error ?? 'Nieprawidłowe dane logowania.';
       },
     });
+  }
+  
+  navigateRegister() {
+    this.router.navigate(['/register'])
   }
 }
