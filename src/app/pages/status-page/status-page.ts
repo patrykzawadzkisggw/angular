@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { OrderService } from '../../services/order-service';
+import { OrderDetailService } from '../../services/order-detail-service';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 
@@ -17,7 +17,7 @@ export class StatusPage implements OnInit {
   orderId: string | null = null;
   constructor(
     private route: ActivatedRoute,
-    private orders: OrderService,
+    private orders: OrderDetailService,
     private router: Router
   ) {}
 

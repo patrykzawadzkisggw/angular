@@ -40,7 +40,7 @@ export class OrderDetailPage implements OnInit {
       });
     }
     this.visible = false;
-    this.router.navigate(['/status']);
+    this.router.navigate(['orders',id, 'status']);
   }
 
   ngOnInit(): void {

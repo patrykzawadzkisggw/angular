@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, map } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AuthService } from './auth-service';
 
@@ -10,7 +10,7 @@ export interface OrderItem {
   quantity: number;
   price_cents: number;
 }
-
+export interface OrderStatusResponse { message: string, image: string };
 export interface OrderDetail {
   id: number;
   status: string;
@@ -28,10 +28,10 @@ export interface OrderDetail {
 
 @Injectable({ providedIn: 'root' })
 export class OrderDetailService {
+  private readonly baseUrl = 'https://securebox.hopto.org:8080/api';
   private cache = new Map<number, { order: OrderDetail; ts: number }>();
 
   constructor(private http: HttpClient, private auth: AuthService) {}
-
 
   getOrder(orderId: number, forceReload = false): Observable<OrderDetail> {
     const cached = this.cache.get(orderId);
@@ -42,12 +42,23 @@ export class OrderDetailService {
     const token = this.auth.getToken?.();
     const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
     return this.http
-      .get<OrderDetail>(`https://securebox.hopto.org:8080/api/orders/${orderId}`, { headers })
+      .get<OrderDetail>(`${this.baseUrl}/orders/${orderId}`, { headers })
       .pipe(
-        tap(order => {
+        tap((order) => {
           if (order && order.id) this.cache.set(orderId, { order, ts: Date.now() });
         })
       );
+  }
+  getOrderStatus(orderId: string): Observable<string> {
+    const token = this.auth.getToken();
+
+    const headers = token
+      ? new HttpHeaders({ Authorization: `Bearer ${token}` })
+      : new HttpHeaders();
+
+    return this.http
+      .get<OrderStatusResponse>(`${this.baseUrl}/orders/${orderId}/status`, { headers })
+      .pipe(map((res) => res.message));
   }
 
   clearCache(orderId?: number) {
@@ -61,8 +72,8 @@ export class OrderDetailService {
   cancelOrder(orderId: number) {
     const token = this.auth.getToken?.();
     const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
-    return this.http.post<any>(`https://securebox.hopto.org:8080/api/orders/${orderId}/cancel`, {}, { headers }).pipe(
-      tap(() => this.clearCache(orderId))
-    );
+    return this.http
+      .post<any>(`${this.baseUrl}/orders/${orderId}/cancel`, {}, { headers })
+      .pipe(tap(() => this.clearCache(orderId)));
   }
 }
