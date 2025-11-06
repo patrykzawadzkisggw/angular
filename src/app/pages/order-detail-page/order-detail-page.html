@@ -3,7 +3,7 @@
 }
 
 @if(error) {
-    <div class="py-6 text-center text-red-600">{{ error }}</div>
+    <app-not-found-page></app-not-found-page>
 }
 
 @if(!loading && order) {
@@ -78,9 +78,11 @@
         </p-table>
     </p-card>
 
+    @if(order.status !== 'Anulowane' && order.status !== 'Dostarczone') {
     <div class="">
         <p-button (click)="showDialog()" label="Anuluj zamówienie" />
     </div>
+    }
 
     <p-dialog 
         header="Anuluj zamówienie" 

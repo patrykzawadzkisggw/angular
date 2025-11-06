@@ -13,6 +13,7 @@ import { InputOtpModule } from 'primeng/inputotp';
 import { InputTextModule } from 'primeng/inputtext';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { CartService, CartItem, CreateOrderRequest, InvalidOrderErrorBody  } from '../../services/cart-service';
+import { OrderService } from '../../services/order-service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, Subject, map, takeUntil, combineLatest } from 'rxjs';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
@@ -23,7 +24,7 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
   styleUrl: './delivery-page.scss'
 })
 export class DeliveryPage {
-  constructor(private router: Router, private cart: CartService, private fb: FormBuilder) {}
+  constructor(private router: Router, private cart: CartService, private fb: FormBuilder, private orderService: OrderService) {}
 
   readonly freeShippingThreshold = 300;
   readonly shippingBelowThreshold = 15;
@@ -128,6 +129,7 @@ export class DeliveryPage {
         this.cart.clear();
         this.showErrors = false;
         this.isPlacingOrder = false;
+        try { this.orderService.notifyOrdersChanged(); } catch {}
         this.router.navigate(['/orders', order.id, 'status']);
       },
       error: (err: HttpErrorResponse) => {

@@ -8,9 +8,11 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { PopoverModule, Popover } from 'primeng/popover';
 import { OrderDetailService, OrderDetail } from '../../services/order-detail-service';
+import { OrderService } from '../../services/order-service';
+import { NotFoundPage } from '../not-found-page/not-found-page';
 @Component({
   selector: 'app-order-detail-page',
-  imports: [CommonModule, CardModule, TagModule, TableModule, RouterLink, ButtonModule, DialogModule, PopoverModule],
+  imports: [CommonModule, CardModule, TagModule, TableModule, RouterLink, ButtonModule, DialogModule, PopoverModule, NotFoundPage],
   templateUrl: './order-detail-page.html',
   styleUrl: './order-detail-page.scss'
 })
@@ -25,7 +27,8 @@ export class OrderDetailPage implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private orderService: OrderDetailService
+    private orderDetailService: OrderDetailService,
+    private orderService: OrderService,
   ) {}
 
   showDialog() {
@@ -37,9 +40,10 @@ export class OrderDetailPage implements OnInit {
     this.cancelling = true;
     this.visible = false;
     if (id) {
-      this.orderService.cancelOrder(id).subscribe({
+      this.orderDetailService.cancelOrder(id).subscribe({
         next: () => {
           this.cancelling = false;
+          try { this.orderService.notifyOrdersChanged(); } catch {}
           this.router.navigate(['orders', id, 'status'], { state: { fromCancel: true, canceled: true } });
         },
         error: () => {
@@ -62,15 +66,16 @@ export class OrderDetailPage implements OnInit {
         return;
       }
 
-      const nav = this.router.getCurrentNavigation();
-      const forceReload = nav == null;
+  const nav = this.router.getCurrentNavigation();
+  // Only force reload on first load / external navigation if we don't already have a cache.
+  const forceReload = !this.orderService.hasCache() && nav == null;
 
       this.loading = true;
       this.error = null;
       this.orderService.getOrder(id, forceReload).subscribe({
-        next: o => {
-          this.order = o;
-          const productsCents = (o.items || []).reduce((s, it) => s + (it.price_cents || 0) * (it.quantity || 0), 0);
+          next: (o: OrderDetail) => {
+            this.order = o;
+            const productsCents = (o.items || []).reduce((s: number, it: any) => s + (it.price_cents || 0) * (it.quantity || 0), 0);
           const discountCents = Math.max(0, productsCents - (o.total_cents || 0));
           const shippingCents = (o.total_cents || 0) < 30000 ? 1500 : 0;
           const totalWithShippingCents = (o.total_cents || 0) + shippingCents;
@@ -82,7 +87,7 @@ export class OrderDetailPage implements OnInit {
           ];
           this.loading = false;
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error('Failed to load order', err);
           this.error = 'Nie udało się pobrać zamówienia';
           this.loading = false;
