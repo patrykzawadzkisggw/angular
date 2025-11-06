@@ -20,6 +20,7 @@ export class OrderDetailPage implements OnInit {
   loading = false;
   error: string | null = null;
   visible: boolean = false;
+  cancelling = false;
 
   constructor(
     private router: Router,
@@ -33,14 +34,23 @@ export class OrderDetailPage implements OnInit {
 
   cancelOrder() {
     const id = this.order?.id;
+    this.cancelling = true;
+    this.visible = false;
     if (id) {
       this.orderService.cancelOrder(id).subscribe({
-        next: () => {},
-        error: () => {}
+        next: () => {
+          this.cancelling = false;
+          this.router.navigate(['orders', id, 'status'], { state: { fromCancel: true, canceled: true } });
+        },
+        error: () => {
+          this.cancelling = false;
+          this.router.navigate(['orders', id, 'status'], { state: { fromCancel: true, canceled: false } });
+        }
       });
+    } else {
+      this.cancelling = false;
+      this.router.navigate(['/orders']);
     }
-    this.visible = false;
-    this.router.navigate(['orders',id, 'status']);
   }
 
   ngOnInit(): void {

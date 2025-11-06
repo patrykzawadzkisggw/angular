@@ -92,10 +92,10 @@
                 Czy na pewno chcesz anulować zamówienie?
         </span>
 
-        <div class="flex justify-end gap-2">
-                <p-button label="Nie" severity="secondary" (click)="visible = false" />
-                <p-button label="Tak" severity="danger" (click)="cancelOrder()" />
-        </div>
+    <div class="flex justify-end gap-2">
+        <p-button label="Nie" severity="secondary" (click)="visible = false" />
+        <p-button label="Tak" severity="danger" (click)="cancelOrder()" [disabled]="cancelling" />
+    </div>
     </p-dialog>
 
 }

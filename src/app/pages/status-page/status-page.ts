@@ -25,6 +25,16 @@ export class StatusPage implements OnInit {
     this.orderId = this.route.snapshot.paramMap.get('id');
     if (!this.orderId) return;
 
+    const nav = this.router.getCurrentNavigation();
+    const state = (nav && (nav.extras as any)?.state) ? (nav.extras as any).state : (history.state || {});
+    if (state?.fromCancel) {
+      if (state.canceled === true) {
+        this.status = 'Zamówienie zostało anulowane';
+        this.isSuccess = false;
+        return;
+      }
+    }
+
     this.orders.getOrderStatus(this.orderId).subscribe({
       next: (s) => {
         if (s === 'zamowienie zlozono') {
