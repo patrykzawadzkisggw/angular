@@ -128,7 +128,7 @@ export class DeliveryPage {
         this.cart.clear();
         this.showErrors = false;
         this.isPlacingOrder = false;
-        this.router.navigate(['/status'], { queryParams: { id: order.id } });
+        this.router.navigate(['/orders', order.id, 'status']);
       },
       error: (err: HttpErrorResponse) => {
         this.isPlacingOrder = false;

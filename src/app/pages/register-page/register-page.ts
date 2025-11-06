@@ -31,6 +31,11 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
     return null;
   }
 }
+function validTrim(control: AbstractControl) {
+  return control.value?.toString().trim().length > 0
+    ? null
+    : { blank: true };
+}
 
 @Component({
   selector: 'app-register-page',
@@ -56,11 +61,11 @@ export class RegisterPage {
         this.formError = null;
       }
     });
-    return !!control && control.invalid && control.touched;
+    return !!control && control?.invalid && (control.dirty || control.touched);
   }
   registerForm = new FormGroup(
     {
-      username: new FormControl('', Validators.required),
+      username: new FormControl('', [Validators.required, validTrim]),
       password: new FormControl('', Validators.required),
       confirmPassword: new FormControl('', Validators.required),
     },
@@ -81,7 +86,7 @@ export class RegisterPage {
 
     this.auth.register(username, password).subscribe({
       next: () => {
-        this.router.navigate(['/login']);
+        this.router.navigate(['/']);
       },
       error: (err) => {
         console.error('Register error:', err);

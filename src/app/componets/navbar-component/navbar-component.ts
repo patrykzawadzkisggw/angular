@@ -62,15 +62,12 @@ export class NavbarComponent {
     return this.auth.isLoggedIn();
   }
 
-  quickLogin() {
-    this.auth.login('test@test.pl', 'tvQOXz@KARHzl9gmO').subscribe({
-      next: () => {
-      },
-      error: () => {
-
-      }
-    });
-  }
+ quickLogin() {
+  this.router.navigate(
+    ['/login'],
+    { queryParams: { redirect: this.router.url } }
+  );
+}
 
   logout() {
     this.auth.logout().subscribe({

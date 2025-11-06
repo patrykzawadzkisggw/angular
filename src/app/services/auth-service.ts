@@ -5,7 +5,7 @@ import { Observable, map, tap } from 'rxjs';
 type TokenResponse = { token: string };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private readonly baseUrl = 'https://securebox.hopto.org:8080/api';
@@ -17,7 +17,7 @@ export class AuthService {
     const body = { login: email, password };
     return this.http
       .post<TokenResponse>(`${this.baseUrl}/register`, body, {
-        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
       })
       .pipe(
         map((res) => res.token),
@@ -25,12 +25,11 @@ export class AuthService {
       );
   }
 
-
   login(email: string, password: string): Observable<string> {
     const body = { login: email, password };
     return this.http
       .post<TokenResponse>(`${this.baseUrl}/login`, body, {
-        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
       })
       .pipe(
         map((res) => res.token),
@@ -43,14 +42,12 @@ export class AuthService {
     const headers = token
       ? new HttpHeaders({ Authorization: `Bearer ${token}` })
       : new HttpHeaders();
-    return this.http
-      .post<void>(`${this.baseUrl}/logout`, {}, { headers })
-      .pipe(
-        tap({
-          next: () => this.clearToken(),
-          error: () => this.clearToken(),
-        })
-      );
+    return this.http.post<void>(`${this.baseUrl}/logout`, {}, { headers }).pipe(
+      tap({
+        next: () => this.clearToken(),
+        error: () => this.clearToken(),
+      })
+    );
   }
 
   getToken(): string | null {

@@ -11,8 +11,15 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { MessageModule } from 'primeng/message';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
+import { AbstractControl } from '@angular/forms';
+
+function validTrim(control: AbstractControl) {
+  return control.value?.toString().trim().length > 0
+    ? null
+    : { blank: true };
+}
 
 @Component({
   selector: 'app-login-page',
@@ -30,8 +37,7 @@ import { AuthService } from '../../services/auth-service';
 export class LoginPage {
   formError: string | null = null;
 
-  constructor(private auth: AuthService, private router: Router) {}
-
+  constructor(private auth: AuthService, private router: Router, private route: ActivatedRoute) {}
   isInvalid(controlName: string): boolean {
     const control = this.loginForm.get(controlName);
     this.loginForm.valueChanges.subscribe(() => {
@@ -42,10 +48,10 @@ export class LoginPage {
     return !!control && control?.invalid && (control.dirty || control.touched);
   }
   loginForm = new FormGroup({
-    login: new FormControl('', Validators.required),
+    login: new FormControl('', [Validators.required, validTrim]),
     password: new FormControl('', Validators.required),
   });
-
+  
   login() {
     this.formError = null;
 
@@ -60,8 +66,8 @@ export class LoginPage {
 
     this.auth.login(login, password).subscribe({
       next: () => {
-        this.router.navigate(['/']);
-        console.log('success');
+        const redirect = this.route.snapshot.queryParamMap.get('redirect') || '/';
+        this.router.navigateByUrl(redirect);
       },
       error: (err) => {
         console.error('Login error:', err);

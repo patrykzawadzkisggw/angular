@@ -27,9 +27,9 @@
         </p-message>
         }
         <button pButton type="button" label="Zaloguj" (click)="login()"></button>
-        <div class="flex items-center mx-auto gap-0">
-            <p-message severity="secondary" variant="simple" class="mx-auto"> Nie masz jeszcze konta? </p-message>
-            <p-button label="Stwórz konto" link (onClick)="navigateRegister()" />
-        </div>
     </form>
 </p-card>
+<div class="flex items-center justify-center max-w-96 mx-auto gap-0">
+    <p-message severity="secondary" variant="simple"> Nie masz konta? </p-message>
+    <p-button label="Utwórz" link (onClick)="navigateRegister()" />
+</div>

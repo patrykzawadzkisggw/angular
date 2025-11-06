@@ -1,6 +1,5 @@
 <p-card header="Rejestracja" class="max-w-96 mx-auto mt-32">
     <form class="flex flex-col gap-6 pt-3" [formGroup]="registerForm">
-
         <div class="flex flex-col gap-1">
             <p-floatlabel variant="in">
                 <input type="text" pInputText id="username" formControlName="username" fluid
@@ -45,9 +44,10 @@
         }
         <button pButton type="button" label="Stwórz konto" (click)="register()">
         </button>
-        <div class="flex items-center mx-auto gap-0">
-            <p-message severity="secondary" variant="simple" class="mx-auto"> Masz już konto? </p-message>
-            <p-button label="Zaloguj się" link (onClick)="navigateLogin()"/>
-        </div>
+
     </form>
 </p-card>
+<div class="flex items-center justify-center max-w-96 mx-auto gap-0">
+    <p-message severity="secondary" variant="simple"> Masz już konto? </p-message>
+    <p-button label="Zaloguj się" link (onClick)="navigateLogin()" />
+</div>
