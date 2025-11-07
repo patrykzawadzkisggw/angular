@@ -100,3 +100,12 @@ $text-primary: #b6349a;
     justify-self: end;
 }
 }
+
+.link {
+    display: inline-flex;
+    align-items: center;
+    gap: .2rem;
+    img {
+        height: 1.3rem;
+    }
+}
