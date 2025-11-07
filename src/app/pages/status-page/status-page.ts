@@ -3,13 +3,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { OrderDetailService } from '../../services/order-detail-service';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
+import { BlockUIModule } from 'primeng/blockui';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-status-page',
   standalone: true,
   templateUrl: './status-page.html',
   styleUrl: './status-page.scss',
-  imports: [CardModule, ButtonModule],
+  imports: [CardModule, ButtonModule, BlockUIModule, ProgressSpinnerModule],
 })
 export class StatusPage implements OnInit {
   status: string | null = null;
