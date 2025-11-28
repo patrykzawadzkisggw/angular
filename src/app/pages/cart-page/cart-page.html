@@ -103,8 +103,8 @@
 <section class="recommendations mt-24">
     <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 ">Rekomendacje</h2>
     <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-5 p-5">
-        @for(product of (cartItems$ | async); track product.name) {
-        <app-product-link routerLink="/product/1"/>
+        @for(product of (recommended$ | async); track product.id) {
+        <app-product-link [product]="product" />
     }
     </div>
     

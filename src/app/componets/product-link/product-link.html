@@ -1,3 +1,5 @@
-<img src="item.png" alt="item">
-<div class="mb-1">Produkt 1</div>
-<div class="font-bold price">9,99 zł</div>
+<a [routerLink]="['/product', product?.id]" class="block">
+	<img [src]="product?.images[0] || 'item.png'" [alt]="product?.name || 'Produkt'" class="w-full"/>
+	<div class="mb-1">{{ product?.name || 'Produkt' }}</div>
+	<div class="font-bold price">{{ product?.price_cents ? (product.price_cents/100 + ' zł') : '' }}</div>
+</a>

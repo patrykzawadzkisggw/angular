@@ -13,6 +13,7 @@ import { InputOtpModule } from 'primeng/inputotp';
 import { InputTextModule } from 'primeng/inputtext';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { CartService, CartItem, CreateOrderRequest, InvalidOrderErrorBody  } from '../../services/cart-service';
+import { ProductService } from '../../services/product-service';
 import { OrderService } from '../../services/order-service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, Subject, map, takeUntil, combineLatest } from 'rxjs';
@@ -24,7 +25,7 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
   styleUrl: './delivery-page.scss'
 })
 export class DeliveryPage {
-  constructor(private router: Router, private cart: CartService, private fb: FormBuilder, private orderService: OrderService) {}
+  constructor(private router: Router, private cart: CartService, private fb: FormBuilder, private orderService: OrderService, private productService: ProductService) {}
 
   readonly freeShippingThreshold = 300;
   readonly shippingBelowThreshold = 15;
@@ -93,6 +94,22 @@ export class DeliveryPage {
       };
       this.cart.setDeliveryInfo(payload);
     });
+
+    try {
+      const alreadyBootstrapped = !!(window as any).__appInitialBootstrapDone;
+      if (!alreadyBootstrapped) {
+        (window as any).__appInitialBootstrapDone = true;
+        const ids = this.cart.getItemsSnapshot().map(i => i.id);
+        if (ids.length) {
+          this.productService.getByIds(ids, true).subscribe({
+            next: (products) => {
+              try { this.cart.updateProductsMetadata(products as any); } catch (e) {}
+            },
+            error: () => {}
+          });
+        }
+      }
+    } catch {}
   }
 
   placeOrder() {

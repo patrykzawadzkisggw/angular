@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from './auth-service';
+import { Product } from './product-service';
 export interface CreateOrderItemRequest {
   product_id: number;
   quantity: number;
@@ -309,6 +310,20 @@ export class CartService {
         updated.push(it);
       }
     }
+    this.setItems(updated);
+  }
+
+  updateProductsMetadata(products: Product[]) {
+    if (!Array.isArray(products) || products.length === 0) return;
+    const byId = new Map<number, Product>(products.map(p => [p.id, p]));
+    const items = this.getItemsSnapshot();
+    const updated = items.map(i => {
+      const p = byId.get(i.id);
+      if (!p) return i;
+      const price = (typeof p.price_cents === 'number') ? (p.price_cents / 100) : i.price;
+      const img = Array.isArray(p.images) && p.images.length ? p.images[0] : i.img;
+      return { ...i, name: p.name ?? i.name, price, img };
+    });
     this.setItems(updated);
   }
 }

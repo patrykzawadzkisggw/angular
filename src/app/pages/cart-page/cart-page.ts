@@ -5,6 +5,7 @@ import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
 import { TableModule } from 'primeng/table';
 import { Router, RouterLink } from "@angular/router";
+import { ProductService } from '../../services/product-service';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { StepperModule } from 'primeng/stepper';
@@ -13,7 +14,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { InputOtpModule } from 'primeng/inputotp';
 import { ProductLink } from '../../componets/product-link/product-link';
 import { CartService, CartItem } from '../../services/cart-service';
-import { map, Observable, combineLatest } from 'rxjs';
+import { map, Observable, combineLatest, catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-cart-page',
@@ -23,6 +24,7 @@ import { map, Observable, combineLatest } from 'rxjs';
 })
 export class CartPage {
   cartItems$!: Observable<CartItem[]>;
+  recommended$!: Observable<any[]>;
   amounts$!: Observable<{ subtotal: number; shipping: number; grandTotal: number; progress: number; missing: number; discountPct?: number; discountAmount?: number }>;
   readonly freeShippingThreshold = 300;
   readonly shippingBelowThreshold = 15;
@@ -33,7 +35,7 @@ export class CartPage {
 
   productNameById = new Map<number, string>();
 
-  constructor(private router: Router, public cart: CartService) {
+  constructor(private router: Router, public cart: CartService, private productService: ProductService) {
     this.cartItems$ = this.cart.items$;
     this.amounts$ = combineLatest([this.cartItems$, this.cart.discount$]).pipe(
       map(([items, discount]) => {
@@ -56,10 +58,31 @@ export class CartPage {
       }
     });
 
+    this.recommended$ = this.productService.getRecommended().pipe(
+      catchError(() => of([]))
+    );
+
     this.cart.discount$.subscribe(d => {
       this.discountApplied = !!(d && (d.percentage ?? 0) > 0);
       this.couponCode = d?.code ?? '';
     });
+
+
+    try {
+      const alreadyBootstrapped = !!(window as any).__appInitialBootstrapDone;
+      if (!alreadyBootstrapped) {
+        (window as any).__appInitialBootstrapDone = true;
+        const ids = this.cart.getItemsSnapshot().map(i => i.id);
+        if (ids.length) {
+          this.productService.getByIds(ids, true).subscribe({
+            next: (products) => {
+              try { this.cart.updateProductsMetadata(products as any); } catch (e) {}
+            },
+            error: () => {}
+          });
+        }
+      }
+    } catch {}
   }
 
   showCouponDialog = false;
