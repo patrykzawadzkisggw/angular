@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, of, map } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AuthService } from './auth-service';
@@ -40,9 +40,8 @@ export class OrderDetailService {
     }
 
     const token = this.auth.getToken?.();
-    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
     return this.http
-      .get<OrderDetail>(`${this.baseUrl}/orders/${orderId}`, { headers })
+      .get<OrderDetail>(`${this.baseUrl}/orders/${orderId}`)
       .pipe(
         tap((order) => {
           if (order && order.id) this.cache.set(orderId, { order, ts: Date.now() });
@@ -52,12 +51,8 @@ export class OrderDetailService {
   getOrderStatus(orderId: string): Observable<string> {
     const token = this.auth.getToken();
 
-    const headers = token
-      ? new HttpHeaders({ Authorization: `Bearer ${token}` })
-      : new HttpHeaders();
-
     return this.http
-      .get<OrderStatusResponse>(`${this.baseUrl}/orders/${orderId}/status`, { headers })
+      .get<OrderStatusResponse>(`${this.baseUrl}/orders/${orderId}/status`)
       .pipe(map((res) => res.message));
   }
 
@@ -71,9 +66,8 @@ export class OrderDetailService {
 
   cancelOrder(orderId: number) {
     const token = this.auth.getToken?.();
-    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
     return this.http
-      .post<any>(`${this.baseUrl}/orders/${orderId}/cancel`, {}, { headers })
+      .post<any>(`${this.baseUrl}/orders/${orderId}/cancel`, {})
       .pipe(tap(() => this.clearCache(orderId)));
   }
 }

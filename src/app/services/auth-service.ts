@@ -39,10 +39,7 @@ export class AuthService {
 
   logout(): Observable<void> {
     const token = this.getToken();
-    const headers = token
-      ? new HttpHeaders({ Authorization: `Bearer ${token}` })
-      : new HttpHeaders();
-    return this.http.post<void>(`${this.baseUrl}/logout`, {}, { headers }).pipe(
+    return this.http.post<void>(`${this.baseUrl}/logout`, {}).pipe(
       tap({
         next: () => this.clearToken(),
         error: () => this.clearToken(),

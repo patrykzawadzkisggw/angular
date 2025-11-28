@@ -104,7 +104,7 @@ export class CartService {
 
   createOrder(payload: CreateOrderRequest): Observable<CreateOrderResponse> {
     const token = this.auth.getToken();
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) });
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.http.post<CreateOrderResponse>(`${this.baseUrl}/orders`, payload, { headers });
   }
 
