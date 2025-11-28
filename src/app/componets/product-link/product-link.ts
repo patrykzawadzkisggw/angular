@@ -12,12 +12,6 @@ import { filter, take } from 'rxjs/operators';
 export class ProductLink {
   @Input() product: any;
 
-  constructor(private router: Router) {}
-
-  open() {
-    this.router.events.pipe(filter(e => e instanceof NavigationEnd), take(1)).subscribe(() => {
-      try { window.scrollTo({ top: 0}); } catch { window.scrollTo(0, 0); }
-    });
-  }
+  
 
 }

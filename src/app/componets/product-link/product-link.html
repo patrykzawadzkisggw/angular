@@ -1,4 +1,4 @@
-<a [routerLink]="['/product', product?.id]" (click)="open()" class="block">
+<a [routerLink]="['/product', product?.id]" class="block">
 	<img [src]="product?.images[0] || 'item.png'" [alt]="product?.name || 'Produkt'" class="w-full"/>
 	<div class="mb-1">{{ product?.name || 'Produkt' }}</div>
 	<div class="font-bold price">{{ product?.price_cents ? (product.price_cents/100 + ' zł') : '' }}</div>
