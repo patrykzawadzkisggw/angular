@@ -6,6 +6,11 @@
         <img [src]="item?.thumbnailImageSrc || item" style="display: block;" />
     </ng-template>
 </p-galleria>
+<div class="mt-4 mb-2">
+    <button pButton type="button" class="p-button-text" (click)="filterVisible = true">Filtry</button>
+</div>
 <app-product-list [categories$]="categories$" [loading$]="loading$"></app-product-list>
+
+<app-filter-drawer [(visible)]="filterVisible"></app-filter-drawer>
 
 

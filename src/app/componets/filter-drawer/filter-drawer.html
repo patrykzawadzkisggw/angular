@@ -1,0 +1,31 @@
+<p-drawer [(visible)]="visible" header="Filtry" [modal]="true">
+  <div class="p-4 space-y-4">
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Sortowanie</label>
+      <p-select [options]="sortOptions" placeholder="Domyślnie" optionLabel="label" optionValue="value" [(ngModel)]="filters.sort" name="sort" class="w-full mt-1"></p-select>
+    </div>
+    <div class="flex items-center gap-2">
+      <p-checkbox [(ngModel)]="filters.okazja" binary="true" inputId="okazja" name="okazja"></p-checkbox>
+      <label for="okazja" class="text-sm">Okazje</label>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Cena min</label>
+      <input pInputText [(ngModel)]="minPriceZl" name="minPrice" placeholder="np. 4,57" class="w-full mt-1 rounded border px-2 py-1" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Cena max</label>
+      <input pInputText [(ngModel)]="maxPriceZl" name="maxPrice" placeholder="np. 10,00" class="w-full mt-1 rounded border px-2 py-1" />
+    </div>
+
+    
+
+    
+
+    <div class="flex justify-between pt-3">
+      <button pButton type="button" class="p-button-text" (click)="reset()">Resetuj</button>
+      <div>
+        <button pButton type="button" (click)="apply()">Zastosuj</button>
+      </div>
+    </div>
+  </div>
+</p-drawer>

@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -10,7 +10,8 @@ import { Menu } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { CartService } from '../../services/cart-service';
 import { AuthService } from '../../services/auth-service';
-import { map, Observable } from 'rxjs';
+import { ProductService } from '../../services/product-service';
+import { map, Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navbar-component',
@@ -26,15 +27,60 @@ import { map, Observable } from 'rxjs';
   templateUrl: './navbar-component.html',
   styleUrl: './navbar-component.scss',
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnDestroy {
   query = '';
   mobileMenuOpen = false;
   items: MenuItem[] = [];
   cartCount$!: Observable<number>;
+  suggestions: Array<{ type: 'product' | 'category'; name: string; id?: number }> = [];
+  searchHasFocus = false;
+  private _subs = new Subscription();
 
   @ViewChild('profileMenu') profileMenu!: Menu;
 
-  constructor(private router: Router, private cart: CartService, private auth: AuthService) {}
+  constructor(private router: Router, private cart: CartService, private auth: AuthService, private productService: ProductService) {}
+
+  ngOnDestroy() {
+    this._subs.unsubscribe();
+  }
+
+  onQueryChange(val: string) {
+    this.query = val;
+    this.updateSuggestions();
+  }
+
+  onSearchFocus() {
+    this.searchHasFocus = true;
+    this.updateSuggestions();
+  }
+
+  onSearchBlur() {
+    setTimeout(() => {
+      this.searchHasFocus = false;
+      this.suggestions = [];
+    }, 200);
+  }
+
+  private updateSuggestions() {
+    const q = (this.query || '').trim();
+    if (!q || !this.searchHasFocus) {
+      this.suggestions = [];
+      return;
+    }
+
+    const s = this.productService.suggest(q).subscribe((res) => (this.suggestions = res));
+    this._subs.add(s);
+  }
+
+  onSuggestionClick(item: { type: 'product' | 'category'; name: string; id?: number }) {
+    this.query = item.name;
+    if (item.type === 'product' && item.id != null) {
+      this.router.navigate(['/product', item.id]);
+    } else if (item.type === 'category') {
+      this.router.navigate(['/search'], { queryParams: { q: item.name }, state: { force: true } });
+    }
+    this.suggestions = [];
+  }
 
   ngOnInit() {
     this.items = [

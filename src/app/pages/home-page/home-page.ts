@@ -6,21 +6,24 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ProductService } from '../../services/product-service';
 import { ProductList } from '../../componets/product-list/product-list';
+import { FilterDrawer } from '../../componets/filter-drawer/filter-drawer';
 import { BehaviorSubject, Subscription, Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { GalleriaModule } from 'primeng/galleria';
 
 @Component({
   selector: 'app-home-page',
-  imports: [CommonModule, CardModule, ButtonModule, DialogModule, InputTextModule, ProductList, GalleriaModule],
+  imports: [CommonModule, CardModule, ButtonModule, DialogModule, InputTextModule, ProductList, FilterDrawer, GalleriaModule],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss'
 })
 export class HomePage implements OnDestroy {
+  filterVisible = false;
   categories$!: Observable<{ name: string; products: any[] }[]>;
   private _categories = new BehaviorSubject<{ name: string; products: any[] }[] | null>(null);
   loading$ = new BehaviorSubject<boolean>(false);
   private _subs = new Subscription();
+  private _filtersUnsub?: () => void;
 
    images = ['1.jpg', '2.jpg', '3.jpg'];
   responsiveOptions: any[] = [
@@ -31,6 +34,8 @@ export class HomePage implements OnDestroy {
 
   constructor(private productService: ProductService) {
     this.categories$ = this._categories.asObservable() as Observable<{ name: string; products: any[] }[]>;
+    // refresh when filters change
+    this._filtersUnsub = this.productService.subscribeFilters(() => this.loadAll());
     this.loadAll();
   }
 
@@ -45,8 +50,9 @@ export class HomePage implements OnDestroy {
   private loadAll() {
     this.startLoading();
     const s = this.productService.getAll().pipe(finalize(() => this.stopLoading())).subscribe((products: any[]) => {
+      const filtered = this.productService.applyFilters(products as any[]);
       const groups = new Map<string, any[]>();
-      (products || []).forEach((p: any) => {
+      (filtered || []).forEach((p: any) => {
         let cat = 'Inne';
         if (p) {
           if (Array.isArray(p.categories) && p.categories.length) {
@@ -67,5 +73,6 @@ export class HomePage implements OnDestroy {
 
   ngOnDestroy(): void {
     this._subs.unsubscribe();
+    if (this._filtersUnsub) this._filtersUnsub();
   }
 }
