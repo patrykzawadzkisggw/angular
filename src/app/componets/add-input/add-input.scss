@@ -23,6 +23,22 @@
 	box-sizing: border-box;
 }
 
+:host ::ng-deep .p-button .p-button-icon {
+	margin: 0 !important;
+	padding: 0 !important;
+	position: static !important;
+	transform: none !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	width: 1em !important;
+	height: 1em !important;
+}
+
+:host ::ng-deep .p-button .p-button-label {
+	display: none !important;
+}
+
 .tabular-nums {
 	font-variant-numeric: tabular-nums;
 }

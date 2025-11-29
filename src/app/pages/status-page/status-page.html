@@ -1,1 +1,32 @@
-<p>status-page works!</p>
+<p-card class="max-w-xl w-full mx-auto mt-40 h-[250px]">
+    <div class="flex flex-col items-center text-center gap-5 p-6 h-full">
+        @if(!status){<div class="flex flex-col gap-4">
+            <p-progressSpinner></p-progressSpinner>
+            <div class="text-xl font-semibold">Przetwarzanie zamówienia...</div>
+        </div>}
+        @else {
+        @if (isSuccess) {
+        <div class="text-green-500">
+            <svg width="90" height="90" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.2" />
+                <path d="M7.5 12.5L10 15l6.5-6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </div>
+        }
+        @else { <div class="text-red-500">
+            <svg width="90" height="90" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.2"></circle>
+                <path d="M9 9L15 15M15 9L9 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+        </div>}
+        <h2 class="text-xl font-semibold"> {{status}}</h2>
+        <div class="flex max-w-full gap-3 pt-3">
+            <button pButton type="button" label="Powrót" (click)="goHome()"></button>
+            @if(isSuccess){<button pButton type="button" label="Szczegóły" severity="secondary"
+                (click)="goToOrder()"></button>}
+        </div>
+        }
+    </div>
+
+</p-card>

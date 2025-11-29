@@ -58,20 +58,25 @@ input, button, textarea, select {
 @tailwind components;
 @tailwind utilities;
 
-html {
+:root {
     font-size: 14px;
     font-family: Inter var, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     line-height: normal;
-    
 }
 :root {
     --p-primary-color: #020617 !important;
     --p-button-contrast-background: var(--p-surface-950) !important;
 }
 
+
+html, body {
+    height: 100%;
+}
+
+
 body {
-    padding: 1rem;
+    padding: 0 1rem;
 }
 @import "primeicons/primeicons.css";
 

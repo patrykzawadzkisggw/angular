@@ -2,10 +2,11 @@ import { Component, Input } from '@angular/core';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
 import { RouterLink } from "@angular/router";
+import { PlDatePipe } from '../../pipes/pl-date.pipe';
 
 @Component({
   selector: 'app-orders-item',
-  imports: [CardModule, TagModule, RouterLink],
+  imports: [CardModule, TagModule, RouterLink, PlDatePipe],
   templateUrl: './orders-item.html',
   styleUrl: './orders-item.scss',
 })

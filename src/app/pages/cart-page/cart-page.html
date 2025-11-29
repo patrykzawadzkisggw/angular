@@ -13,6 +13,12 @@
     <p-card class="cart-card w-full md:col-start-1 md:row-start-2">
         <div class="cart-card__heading text-xl font-semibold mb-3">Koszyk</div>
 
+        @if (hasInvalid$ | async) {
+            <div class="mb-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded p-3">
+                W koszyku znajdują się produkty, których nie można zamówić. Usuń je, aby kontynuować.
+            </div>
+        }
+
     <p-table [value]="(cartItems$ | async) || []">
             <ng-template pTemplate="body" let-product>
                 <tr>
@@ -23,13 +29,13 @@
                                     <img [src]="product.img" [alt]="product.name" class="bg-[#f7f8f7] rounded h-10 md:h-[60px]" />
                                 </div>
                                 <div class="flex flex-col justify-between">
-                                    <span class="font-semibold">{{ product.name }}</span>
-                                    <span class="text-sm text-gray-600">{{ product.price }} zł</span>
+                                    <span class="font-semibold" [ngClass]="{'line-through text-gray-400': (hasInvalid$ | async) && isInvalid(product.id)}">{{ product.name }}</span>
+                                    <span class="text-sm" [ngClass]="{'text-gray-400 line-through': (hasInvalid$ | async) && isInvalid(product.id), 'text-gray-600': !((hasInvalid$ | async) && isInvalid(product.id))}">{{ product.price }} zł</span>
                                 </div>
                             </a>
 
                             <div class="cart-item__actions flex items-center gap-4 mt-4 [@media(min-width:900px)]:mt-0 [@media(min-width:900px)]:w-[230px]">
-                                <div class="cart-item__total font-medium [@media(min-width:900px)]:order-3 [@media(min-width:900px)]:ml-auto">{{ product.quantity * product.price }} zł</div>
+                                <div class="cart-item__total font-medium [@media(min-width:900px)]:order-3 [@media(min-width:900px)]:ml-auto" [ngClass]="{'text-gray-400 line-through': (hasInvalid$ | async) && isInvalid(product.id)}">{{ product.quantity * product.price }} zł</div>
                                 <div class="flex-1 [@media(min-width:900px)]:hidden"></div>
                                 <div class="cart-item__remove text-red-500 cursor-pointer hover:underline [@media(min-width:900px)]:order-2" (click)="onRemove(product.id)">Usuń</div>
                                 <app-add-input class="num [@media(min-width:900px)]:order-1"
@@ -51,15 +57,19 @@
                         } @else {
                             <div class="text-green-600">Darmowa dostawa!</div>
                         }
+                        @if (((amounts$ | async)?.discountAmount ?? 0) > 0) {
+                            <div class="text-sm text-gray-600">Zniżka ({{ (amounts$ | async)?.discountPct ?? 0 }}%): -{{ (amounts$ | async)?.discountAmount | number:'1.0-0' }} zł</div>
+                        }
             @if (!discountApplied) {
                 <div class="flex items-center w-full">
                     <div>kupon</div>
                     <div class="ml-auto cursor-pointer text-primary" (click)="openCouponDialog()">dodaj</div>
                 </div>
             } @else {
-                <div class="text-green-600">Zniżka 10%</div>
+                <div class="text-green-600">Zniżka {{ (amounts$ | async)?.discountPct ?? 0 }}%</div>
             }
             <p-button [label]="'Zamów ' + ((((amounts$ | async)?.grandTotal ?? 0) | number:'1.2-2')) + ' zł'"
+                      [disabled]="hasInvalid$ | async"
                       routerLink="/delivery" class="w-full" styleClass="w-full" />
         </div>
     </p-card>
@@ -79,9 +89,10 @@
                         <div class="ml-auto cursor-pointer text-primary" (click)="openCouponDialog()">dodaj</div>
                     </div>
                 } @else {
-                    <div class="text-green-600">Zniżka 10%</div>
+                    <div class="text-green-600">Zniżka {{ (amounts$ | async)?.discountPct ?? 0 }}%</div>
                 }
                 <p-button [label]="'Zamów ' + ((((amounts$ | async)?.grandTotal ?? 0) | number:'1.2-2')) + ' zł'"
+                          [disabled]="hasInvalid$ | async"
                           routerLink="/delivery" class="w-full" styleClass="w-full" />
             </div>
         </p-card>
@@ -91,9 +102,9 @@
 
 <section class="recommendations mt-24">
     <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 ">Rekomendacje</h2>
-    <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-5 p-5">
-        @for(product of (cartItems$ | async); track product.name) {
-        <app-product-link routerLink="/product/1"/>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-5 p-5 pl-0 pr-0">
+        @for(product of (recommended$ | async); track product.id) {
+        <app-product-link [product]="product" />
     }
     </div>
     
@@ -109,8 +120,8 @@
     [style]="{ width: '22rem' }"
 >
     <div class="grid gap-3">
-        <label for="couponInput">Podaj kod kuponu</label>
-        <p-inputOtp id="couponInput" [(ngModel)]="couponCode" [length]="4" inputStyleClass="w-10 h-10 text-center" />
+    <label for="couponInput">Podaj kod kuponu</label>
+    <input id="couponInput" pInputText [(ngModel)]="couponCode" maxlength="10" class="w-full p-2" />
         <div class="flex gap-2 justify-end mt-2">
             <p-button label="Anuluj" severity="secondary" (onClick)="cancelCouponDialog()" />
             <p-button label="Zastosuj" (onClick)="confirmCoupon()" />
@@ -139,6 +150,49 @@
         <div>Wprowadzony kupon jest nieprawidłowy. Spróbuj ponownie.</div>
         <div class="flex justify-end">
             <p-button label="OK" (onClick)="showInvalidCouponDialog = false" />
+        </div>
+    </div>
+</p-dialog>
+
+<!-- Dialog: brakujące/nieistniejące produkty -->
+<p-dialog
+    header="Nieistniejące produkty"
+    [(visible)]="showNotFoundDialog"
+    [modal]="true"
+    [dismissableMask]="true"
+    [style]="{ width: '26rem' }"
+>
+    <div class="space-y-3">
+        <div>W koszyku znajdują się produkty, których już nie ma w ofercie. Usuń je, aby móc złożyć zamówienie.</div>
+        <div class="flex justify-end">
+            <p-button label="Przejdź do koszyka" (onClick)="showNotFoundDialog = false" />
+        </div>
+    </div>
+    
+</p-dialog>
+
+<!-- Dialog: niewystarczający stan magazynowy -->
+<p-dialog
+    header="Braki magazynowe"
+    [(visible)]="showInsufficientDialog"
+    [modal]="true"
+    [dismissableMask]="true"
+    [style]="{ width: '28rem' }"
+>
+    <div class="space-y-3">
+        <div>Niektóre pozycje zostały automatycznie skorygowane do dostępnej ilości:</div>
+        <ul class="list-disc pl-6">
+            @for (row of insufficientDetails; track row.product_id) {
+                <li>
+                    <span>
+                        {{ getProductName(row.product_id) }}:
+                        dostępne {{ row.available }}, brakowało {{ row.missing }}
+                    </span>
+                </li>
+            }
+        </ul>
+        <div class="flex justify-end">
+            <p-button label="Rozumiem" (onClick)="showInsufficientDialog = false" />
         </div>
     </div>
 </p-dialog>

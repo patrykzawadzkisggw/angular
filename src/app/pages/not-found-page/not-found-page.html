@@ -1,1 +1,21 @@
-<p>not-found-page works!</p>
+<p-card class="max-w-2xl w-full mx-auto mt-40">
+    <div class="flex flex-col items-center text-center gap-5 p-6">
+      <div class="text-red-500">
+        <svg width="90" height="90" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.2"></circle>
+          <path d="M9 9L15 15M15 9L9 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+      </div>
+
+      <h2 class="text-xl font-semibold">Nie znaleziono strony (404)</h2>
+      <p class="text-slate-500">
+        Link który otworzyłeś jest niewłaściwy, albo strona już nie istnieje.
+      </p>
+
+      <div class="flex gap-3 pt-3">
+        <button pButton type="button" label="Powrót" (click)="goBack()"></button>
+        <button pButton type="button" label="Strona główna" (click)="goHome()" severity="secondary"></button>
+      </div>
+
+    </div>
+</p-card>

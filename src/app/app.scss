@@ -1,13 +1,18 @@
-
-:host {
-    min-height: 100dvh; 
-    display: grid;
-    grid-template-rows: auto 1fr auto; 
+html, body, app-root {
+    height: 100%;
+    margin: 0;
 }
 
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
 
 .page {
-	width: 100%;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 footer {

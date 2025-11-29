@@ -1,1 +1,81 @@
-<p>product-page works!</p>
+<div class="max-w-6xl mx-auto p-4">
+
+    @if (product$ | async) {
+    <div class="grid md:grid-cols-[1fr_420px] gap-6 mt-4">
+      <!-- galeria -->
+      <div class=" p-4">
+        <p-galleria [value]="images" [showIndicators]="false" [showItemNavigatorsOnHover]="true" [showItemNavigators]="true" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px', 'border': 'none' }">
+    <ng-template #item let-item>
+        <img [src]="item.itemImageSrc" style="width: 100%; display: block;" />
+    </ng-template>
+    <ng-template #thumbnail let-item>
+        <img [src]="item.thumbnailImageSrc" style="display: block;" />
+    </ng-template>
+</p-galleria>
+
+
+      </div>
+
+      <!-- informacje -->
+            <div class="space-y-4">
+
+                    <div class="flex flex-col gap-3 h-full justify-center  w-full test">
+                        <div class="text-2xl font-semibold">{{ (product$ | async)?.name }}</div>
+                        <div class="text-xl text-gray-800 font-bold">{{ (((product$ | async)?.price_cents ?? 0) / 100) | number:'1.2-2' }} zł</div>
+                        <div class="text-sm text-gray-600">Dostępne: <span class="font-medium">{{ (product$ | async)?.stock ?? '-' }}</span></div>
+                        <div class="pt-2">
+                              <button pButton type="button" (click)="addToCart()" [disabled]="(((product$ | async)?.stock) ?? 0) <= 0" class="w-full">Dodaj do koszyka</button>
+                        </div>
+          </div>
+      
+
+      </div>
+    </div>
+
+    <!-- szczegoly -->
+    <div class="mt-6">
+<h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 ">O Produkcie</h2>
+      <p-accordion>
+    <p-accordion-panel value="0">
+        <p-accordion-header>Szczegóły</p-accordion-header>
+        <p-accordion-content>
+            <p class="m-0">
+                {{ (product$ | async)?.details }}
+            </p>
+        </p-accordion-content>
+    </p-accordion-panel>
+
+    <p-accordion-panel value="1">
+        <p-accordion-header>Przechowywanie</p-accordion-header>
+        <p-accordion-content>
+            <p class="m-0">
+                {{ (product$ | async)?.storage }}
+            </p>
+        </p-accordion-content>
+    </p-accordion-panel>
+
+    <p-accordion-panel value="2">
+        <p-accordion-header>Składniki</p-accordion-header>
+        <p-accordion-content>
+            <p class="m-0">
+                {{ (product$ | async)?.ingredients }}
+            </p>
+        </p-accordion-content>
+    </p-accordion-panel>
+</p-accordion>
+    </div>
+
+    <section class="recommendations mt-24">
+    <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 ">Rekomendacje</h2>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-5 p-5 pl-0 pr-0">
+        @for(product of (recommended$ | async); track product.id) {
+        <app-product-link [product]="product" />
+    }
+    </div>
+    
+</section>
+    } @else {
+        <div class="text-center py-20">Ładowanie produktu…</div>
+    }
+</div>
+

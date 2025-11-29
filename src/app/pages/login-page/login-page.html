@@ -1,6 +1,35 @@
+<p-card header="Logowanie" class="max-w-96 mx-auto mt-32">
+    <form class="flex flex-col gap-6 pt-3" [formGroup]="loginForm">
+        <div class="flex flex-col gap-1">
+            <p-floatlabel variant="in">
+                <input type="text" pInputText id="login" formControlName="login" fluid [invalid]="isInvalid('login')" />
+                <label for="login">Nazwa użytkownika</label>
+            </p-floatlabel>
 
-<a href="#" class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+            @if (isInvalid('login')) {
+            <p-message severity="error" size="small" variant="simple">Pole wymagane.</p-message>
+            }
+        </div>
+        <div class="flex flex-col gap-1">
+            <p-floatlabel variant="in">
+                <input type="password" pInputText id="password" formControlName="password" fluid
+                    [invalid]="isInvalid('password')" />
+                <label for="password">Hasło</label>
+            </p-floatlabel>
 
-<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Noteworthy technology acquisitions 2021</h5>
-<p class="font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
-</a>
+            @if (isInvalid('password')) {
+            <p-message severity="error" size="small" variant="simple">Pole wymagane.</p-message>
+            }
+        </div>
+        @if (formError) {
+        <p-message severity="error" variant="simple" class="mt-2 mx-auto">
+            {{ formError }}
+        </p-message>
+        }
+        <button pButton type="button" label="Zaloguj" (click)="login()"></button>
+    </form>
+</p-card>
+<div class="flex items-center justify-center max-w-96 mx-auto gap-0">
+    <p-message severity="secondary" variant="simple"> Nie masz konta? </p-message>
+    <p-button label="Utwórz" link (onClick)="navigateRegister()" />
+</div>

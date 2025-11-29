@@ -2,7 +2,7 @@
     <div class="card">
         <div class="order">
             <span class="title block">{{ order.status }}</span>
-            <span class="block b600">{{ order.date }}</span>
+            <span class="block b600">{{ order.date | plDate }}</span>
         </div>
 
         <div class="price">
@@ -25,11 +25,13 @@
         </div>
 
         <div class="details">
-            <span [routerLink]="['/orders', order.id]">Szczegóły <i class="pi pi-external-link"></i></span>
+            <span [routerLink]="['/orders', order.id]" class="link">Szczegóły 
+                <img src="link.svg" alt="">
+            </span>
         </div>
 
         <div class="gallery">
-            @for(img of order.images; track img) {
+            @for(img of order.images; track $index) {
                 <img [src]="img" alt="">
             }
         </div>

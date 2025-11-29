@@ -9,17 +9,27 @@
 			<form class="flex-1 mx-3" (ngSubmit)="onSearch()">
 				<label for="q" class="sr-only">Szukaj</label>
 				<div class="relative">
-		      <input id="q" pInputText type="text" [(ngModel)]="query" name="q" placeholder="Szukaj..."
-			      class="nav-pill w-full h-14 rounded-full pl-4 pr-16 bg-white border border-gray-100 focus:outline-none focus:border-gray-100 focus:ring-0 focus:shadow-none shadow-sm" />
+				      <input id="q" pInputText type="text" [(ngModel)]="query" (ngModelChange)="onQueryChange($event)" (focus)="onSearchFocus()" (blur)="onSearchBlur()" name="q" placeholder="Szukaj..."
+				      class="nav-pill w-full h-14 rounded-full pl-4 pr-16 bg-white border border-gray-100 focus:outline-none focus:border-gray-100 focus:ring-0 focus:shadow-none shadow-sm" />
 		    <button type="submit" aria-label="Szukaj"
 			    class="absolute right-2.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-violet-50 hover:bg-violet-100 active:bg-violet-200 transition flex items-center justify-center shadow">
 						<i class="pi pi-search text-violet-600 text-sm"></i>
 					</button>
-				</div>
-			</form>
+								@if (suggestions.length) {
+									<div class="absolute left-0 right-0 mt-2 bg-white border rounded-lg shadow z-50 max-h-64 overflow-auto w-full">
+										@for(item of suggestions; track item.name) {
+											<div (mousedown)="onSuggestionClick(item)" class="px-3 py-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2">
+												<i class="pi {{ item.type === 'product' ? 'pi-box' : 'pi-tags' }} text-violet-600"></i>
+												<div class="text-sm">{{ item.name }}</div>
+											</div>
+										}
+									</div>
+								}
+								</div>
+								</form>
 
 			<a routerLink="/cart" class="relative flex items-center gap-1 rounded-full border-2 border-violet-100 bg-white px-3 py-1" aria-label="Koszyk">
-				<i class="pi pi-shopping-cart text-violet-600 text-base"></i>
+				<img src="cart.svg" alt="Koszyk" class="h-7 w-7 text-violet-600" />
 				<span class="text-violet-600 text-sm font-semibold">{{ (cartCount$ | async) ?? 0 }}</span>
 			</a>
 		</div>
@@ -33,20 +43,30 @@
 			<form class="flex-1 max-w-2xl mx-6" (ngSubmit)="onSearch()">
 				<label for="q_desktop" class="sr-only">Szukaj produktów</label>
 				<div class="relative">
-		      <input id="q_desktop" pInputText type="text" [(ngModel)]="query" name="q_desktop" placeholder="Szukaj produktów..."
-			      class="nav-pill w-full h-14 rounded-full pl-5 pr-16 bg-white border border-gray-100 focus:outline-none focus:border-gray-100 focus:ring-0 focus:shadow-none shadow-sm" />
+				<input id="q_desktop" pInputText type="text" [(ngModel)]="query" (ngModelChange)="onQueryChange($event)" (focus)="onSearchFocus()" (blur)="onSearchBlur()" name="q_desktop" placeholder="Szukaj produktów..."
+				      class="nav-pill w-full h-14 rounded-full pl-5 pr-16 bg-white border border-gray-100 focus:outline-none focus:border-gray-100 focus:ring-0 focus:shadow-none shadow-sm" />
 		    <button type="submit" aria-label="Szukaj"
 			    class="absolute right-2.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-violet-50 hover:bg-violet-100 active:bg-violet-200 transition flex items-center justify-center shadow">
 						<i class="pi pi-search text-violet-600 text-sm"></i>
 					</button>
-				</div>
-			</form>
+								@if (suggestions.length) {
+									<div class="absolute left-0 mt-2 bg-white border rounded-lg shadow z-50 max-h-64 overflow-auto w-full">
+										@for(item of suggestions; track item.name) {
+											<div (mousedown)="onSuggestionClick(item)" class="px-3 py-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2">
+												<i class="pi {{ item.type === 'product' ? 'pi-box' : 'pi-tags' }} text-violet-600"></i>
+												<div class="text-sm">{{ item.name }}</div>
+											</div>
+										}
+									</div>
+								}
+								</div>
+						</form>
 
 			<!-- Right: cart + profile/menu/login -->
 			<div class="flex items-center gap-3">
 				<a routerLink="/cart" class="inline-flex items-center rounded-full border-2 border-violet-100 bg-violet-100 pl-1 pr-2 py-1" aria-label="Koszyk">
 					<span class="flex items-center gap-1 rounded-full bg-white px-3 py-1">
-						<i class="pi pi-shopping-cart text-violet-600 text-base"></i>
+						<img src="cart.svg" alt="Koszyk" class="h-7 w-7 text-violet-600" />
 						<span class="text-violet-600 text-sm font-semibold">{{ (cartCount$ | async) ?? 0 }}</span>
 					</span>
 					<span class="ml-2 text-black text-sm font-medium">Koszyk</span>
@@ -55,7 +75,7 @@
 				@if (isLoggedIn()) {
 					<button type="button" (click)="toggleProfileMenu($event)" aria-label="Menu"
 						class="inline-flex items-center justify-center gap-2 rounded-full border-2 border-violet-300 bg-white hover:bg-violet-50 active:bg-violet-100 text-violet-700 px-4 py-2 text-sm shadow-sm transition">
-						<i class="pi pi-user text-violet-600 text-base"></i>
+						<img src="prof.svg" alt="Koszyk" class="h-7 w-7 text-violet-600" />
 						
 					</button>
 					
@@ -71,7 +91,7 @@
 	</div>
 
 	<!-- Desktop profile/menu -->
-	<p-menu #profileMenu [model]="items" [popup]="true"></p-menu>
+	<p-menu #profileMenu [model]="items" [popup]="true" appendTo="body"></p-menu>
 </nav>
 
 	<!-- Fullscreen mobile menu overlay -->
