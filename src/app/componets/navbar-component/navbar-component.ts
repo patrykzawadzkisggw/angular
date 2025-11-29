@@ -51,7 +51,10 @@ export class NavbarComponent {
 
   onSearch() {
     const trimmed = this.query.trim();
-    this.router.navigate(['/search'], trimmed ? { queryParams: { q: trimmed } } : undefined);
+    this.router.navigate(
+      ['/search'],
+      trimmed ? { queryParams: { q: trimmed }, state: { force: true } } : undefined
+    );
   }
 
   navigateHome() {

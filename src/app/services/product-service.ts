@@ -32,6 +32,7 @@ export class ProductService {
   
   private byIdsCache = new Map<string, { products: Product[]; ts: number }>();
   private productCache = new Map<number, { detail: ProductDetail; ts: number }>();
+  private searchCache = new Map<string, { products: Product[]; ts: number }>();
 
   constructor(private http: HttpClient) {}
 
@@ -61,10 +62,18 @@ export class ProductService {
   }
 
   search(q: string, forceReload = false): Observable<Product[]> {
-    const params = new HttpParams().set('q', q ?? '');
+    const key = String(q ?? '');
+    if (!forceReload && this.searchCache.has(key)) {
+      return of(this.searchCache.get(key)!.products);
+    }
+
+    const params = new HttpParams().set('q', key);
     return this.http
       .get<Product[]>(`${this.baseUrl}/products/search`, { params })
-      .pipe(catchError(() => of([])));
+      .pipe(
+        tap((res) => this.searchCache.set(key, { products: res, ts: Date.now() })),
+        catchError(() => of([]))
+      );
   }
 
   getByIds(ids: number[], forceReload = false): Observable<Product[]> {

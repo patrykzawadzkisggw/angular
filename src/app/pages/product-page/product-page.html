@@ -19,7 +19,7 @@
       <!-- informacje -->
             <div class="space-y-4">
 
-                    <div class="flex flex-col gap-3 h-full justify-center max-w-sm w-full ml-auto">
+                    <div class="flex flex-col gap-3 h-full justify-center  w-full test">
                         <div class="text-2xl font-semibold">{{ (product$ | async)?.name }}</div>
                         <div class="text-xl text-gray-800 font-bold">{{ (((product$ | async)?.price_cents ?? 0) / 100) | number:'1.2-2' }} zł</div>
                         <div class="text-sm text-gray-600">Dostępne: <span class="font-medium">{{ (product$ | async)?.stock ?? '-' }}</span></div>
@@ -67,7 +67,7 @@
 
     <section class="recommendations mt-24">
     <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 ">Rekomendacje</h2>
-    <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-5 p-5">
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-5 p-5 pl-0 pr-0">
         @for(product of (recommended$ | async); track product.id) {
         <app-product-link [product]="product" />
     }
