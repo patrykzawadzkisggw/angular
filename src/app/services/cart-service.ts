@@ -91,12 +91,7 @@ export class CartService {
         }
       }
     } catch {}
-    const seed: CartItem[] = [
-      { id: 1, name: 'Produkt A', quantity: 2, price: 50, img: 'orange.png' },
-      { id: 2, name: 'Produkt B', quantity: 1, price: 100, img: 'orange.png' },
-      { id: 3, name: 'Produkt C', quantity: 3, price: 30, img: 'orange.png' },
-      { id: 4, name: 'Produkt D', quantity: 2, price: 70, img: 'orange.png' }
-    ];
+    const seed: CartItem[] = [];
     this.saveToStorage(seed);
     return seed;
   }

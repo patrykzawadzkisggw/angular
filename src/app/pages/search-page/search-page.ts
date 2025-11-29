@@ -2,14 +2,13 @@ import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { ProductService } from '../../services/product-service';
-import { ProductLink } from '../../componets/product-link/product-link';
-import { NotFoundPage } from '../not-found-page/not-found-page';
+import { ProductList } from '../../componets/product-list/product-list';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
-import { map, distinctUntilChanged, finalize, filter } from 'rxjs/operators';
+import {  finalize, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-search-page',
-  imports: [CommonModule, ProductLink, NotFoundPage],
+  imports: [CommonModule, ProductList],
   templateUrl: './search-page.html',
   styleUrl: './search-page.scss'
 })
