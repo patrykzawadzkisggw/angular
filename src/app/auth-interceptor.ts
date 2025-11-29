@@ -9,7 +9,6 @@ export function authInterceptor(request: HttpRequest<unknown>, next: HttpHandler
   const router = inject(Router);
 
   if (token) {
-    console.log('Token injected');
     request = request.clone({
       setHeaders: { Authorization: `Bearer ${token}` },
     });

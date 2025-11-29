@@ -13,7 +13,7 @@ import { ProductLink } from '../../componets/product-link/product-link';
 
 @Component({
   selector: 'app-product-page',
-  imports: [CommonModule, RouterLink, CardModule, ButtonModule, AccordionModule, GalleriaModule, ProductLink],
+  imports: [CommonModule, CardModule, ButtonModule, AccordionModule, GalleriaModule, ProductLink],
   templateUrl: './product-page.html',
   styleUrl: './product-page.scss'
 })
