@@ -7,6 +7,7 @@ import { inject } from '@angular/core';
 export function authInterceptor(request: HttpRequest<unknown>, next: HttpHandlerFn) {
   const token = inject(AuthService).getToken();
   const router = inject(Router);
+  const auth = inject(AuthService);
 
   if (token) {
     request = request.clone({
@@ -20,6 +21,7 @@ export function authInterceptor(request: HttpRequest<unknown>, next: HttpHandler
     catchError((err) => {
       if (err instanceof HttpErrorResponse) {
         if (err.status === 401) {
+          auth.clearToken();
           router.navigate(['/login'], {
             queryParams: { redirect: router.routerState.snapshot.url },
           });

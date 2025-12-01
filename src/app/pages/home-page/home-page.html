@@ -1,3 +1,7 @@
+@if (!isMobile) {
+  <app-search-tags [tags]="tags" [isMobile]="isMobile"></app-search-tags>
+}
+
 <p-galleria [value]="images" [showItemNavigators]="true" [showThumbnails]="false" [showIndicators]="true" [showItemNavigatorsOnHover]="true" [circular]="true" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'border': 'none' }">
     <ng-template #item let-item>
         <img [src]="item?.itemImageSrc || item" style="width: 100%; display: block;" />
@@ -6,6 +10,10 @@
         <img [src]="item?.thumbnailImageSrc || item" style="display: block;" />
     </ng-template>
 </p-galleria>
+
+@if (isMobile) {
+  <app-search-tags [tags]="tags" [isMobile]="isMobile"></app-search-tags>
+}
 <div class="mt-4 mb-2">
     <button pButton type="button" class="p-button-text" (click)="filterVisible = true">Filtry</button>
 </div>

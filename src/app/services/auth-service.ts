@@ -70,7 +70,7 @@ export class AuthService {
     } catch {}
   }
 
-  private clearToken() {
+  clearToken() {
     try {
       localStorage.removeItem(this.storageKey);
     } catch {}
