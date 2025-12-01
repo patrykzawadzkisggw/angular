@@ -78,6 +78,10 @@ html, body {
 body {
     padding: 0 1rem;
 }
+input, textarea, select {
+    font-size: 16px;
+}
+
 @import "primeicons/primeicons.css";
 
 .page {
