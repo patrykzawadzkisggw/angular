@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -7,23 +7,38 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ProductService } from '../../services/product-service';
 import { ProductList } from '../../componets/product-list/product-list';
 import { FilterDrawer } from '../../componets/filter-drawer/filter-drawer';
+import { SearchTags } from '../../componets/search-tags/search-tags';
 import { BehaviorSubject, Subscription, Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { GalleriaModule } from 'primeng/galleria';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+
+interface SearchTag {
+  name: string;
+  image: string;
+  category?: string;
+}
 
 @Component({
   selector: 'app-home-page',
-  imports: [CommonModule, CardModule, ButtonModule, DialogModule, InputTextModule, ProductList, FilterDrawer, GalleriaModule],
+  imports: [CommonModule, CardModule, ButtonModule, DialogModule, InputTextModule, ProductList, FilterDrawer, SearchTags, GalleriaModule],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss'
 })
-export class HomePage implements OnDestroy {
+export class HomePage implements OnInit, OnDestroy {
   filterVisible = false;
   categories$!: Observable<{ name: string; products: any[] }[]>;
   private _categories = new BehaviorSubject<{ name: string; products: any[] }[] | null>(null);
   loading$ = new BehaviorSubject<boolean>(false);
   private _subs = new Subscription();
   private _filtersUnsub?: () => void;
+  isMobile = false;
+  tags: SearchTag[] = [
+    { name: 'Elektronika', image: 't1.svg', category: 'electronics' },
+    { name: 'Moda', image: 't2.svg', category: 'fashion' },
+    { name: 'Dom', image: 't3.svg', category: 'home' },
+    { name: 'Sport', image: 't3.svg', category: 'sports' }
+  ];
 
    images = ['1.jpg', '2.jpg', '3.jpg'];
   responsiveOptions: any[] = [
@@ -32,11 +47,17 @@ export class HomePage implements OnDestroy {
     { breakpoint: '560px', numVisible: 1 }
   ];
 
-  constructor(private productService: ProductService) {
+  constructor(private productService: ProductService, private breakpointObserver: BreakpointObserver) {
     this.categories$ = this._categories.asObservable() as Observable<{ name: string; products: any[] }[]>;
     // refresh when filters change
     this._filtersUnsub = this.productService.subscribeFilters(() => this.loadAll());
     this.loadAll();
+  }
+
+  ngOnInit() {
+    this.breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
+      this.isMobile = result.matches;
+    });
   }
 
   private startLoading() {

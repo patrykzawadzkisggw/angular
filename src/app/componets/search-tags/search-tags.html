@@ -1,0 +1,19 @@
+@if (isMobile) {
+  <div class="tags-container-mobile">
+    @for (tag of tags; track tag.name) {
+      <div class="tag-mobile" (click)="onTagClick(tag)">
+        <img [src]="tag.image" [alt]="tag.name" />
+        <span>{{ tag.name }}</span>
+      </div>
+    }
+  </div>
+} @else {
+  <div class="tags-container">
+    @for (tag of tags; track tag.name) {
+      <div class="tag" (click)="onTagClick(tag)">
+        <img [src]="tag.image" [alt]="tag.name" />
+        <span>{{ tag.name }}</span>
+      </div>
+    }
+  </div>
+}

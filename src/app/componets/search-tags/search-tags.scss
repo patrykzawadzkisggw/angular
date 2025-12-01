@@ -1,0 +1,62 @@
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  background-color: #f3f4f6;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-bottom: 1rem;
+}
+
+.tag:hover {
+  background-color: #e5e7eb;
+}
+
+.tag img {
+  width: 40px;
+  height: 40px;
+  border-radius: 0.5rem;
+  object-fit: cover;
+}
+
+.tag span {
+  font-weight: 500;
+}
+
+.tags-container-mobile {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 1rem;
+  justify-items: center;
+}
+
+.tag-mobile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  cursor: pointer;
+  text-align: center;
+}
+
+.tag-mobile img {
+  width: 50px;
+  height: 50px;
+  border-radius: 0.5rem;
+  object-fit: cover;
+}
+
+.tag-mobile span {
+  font-size: 0.875rem;
+  font-weight: 500;
+}

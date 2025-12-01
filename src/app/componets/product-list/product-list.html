@@ -14,7 +14,7 @@
     @if ((filteredProducts$ | async)?.length === 0) {
       <app-not-found-page></app-not-found-page>
     } @else {
-      <div class="grid grid-cols-[repeat(auto-fill,200px)] gap-5 p-5 pl-0 pr-0 justify-center">
+      <div class="grid grid-cols-2 gap-5 p-5 pl-0 pr-0">
         @for(product of (filteredProducts$ | async); track product.id) {
           <app-product-link [product]="product" />
         }
@@ -25,9 +25,9 @@
       <app-not-found-page></app-not-found-page>
     } @else {
       @for(category of categories; track category.name) {
-        <section class="recommendations mt-24">
-          <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 ">{{ category.name }}</h2>
-          <div class="grid grid-cols-[repeat(auto-fill,200px)] gap-5 p-5 pl-0 pr-0">
+        <section class="recommendations mb-8">
+          <h2 class="mb-1 text-4xl tracking-tight font-extrabold text-gray-900 ">{{ category.name }}</h2>
+          <div class="grid grid-cols-3 lg:grid-cols-4 gap-5 p-5 pl-0 pr-0">
             @for(product of (category.products); track product.id) {
               <app-product-link [product]="product" />
             }
