@@ -26,6 +26,28 @@ export interface Order {
   images: string[];
 }
 
+export interface OrderItem {
+  product_id: number;
+  name: string;
+  quantity: number;
+  price_cents: number;
+}
+
+export interface OrderDetail {
+  id: number;
+  status: string;
+  created_at: string;
+  total_cents: number;
+  total_items: number;
+  items: OrderItem[];
+  first_name?: string;
+  last_name?: string;
+  city?: string;
+  postal_code?: string;
+  address?: string;
+  promo_code?: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -114,5 +136,20 @@ export class OrderService {
       }),
       catchError((err) => throwError(() => err))
     );
+  }
+
+  clearCache(orderId?: number) {
+    if (orderId == null) {
+      this.orderDetailsCache.clear();
+    } else {
+      this.orderDetailsCache.delete(orderId);
+    }
+  }
+
+  cancelOrder(orderId: number) {
+    const token = this.auth.getToken?.();
+    return this.http
+      .post<any>(`${this.baseUrl}/orders/${orderId}/cancel`, {})
+      .pipe(tap(() => this.clearCache(orderId)));
   }
 }

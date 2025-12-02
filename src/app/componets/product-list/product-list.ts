@@ -2,13 +2,12 @@ import { Component, Input, OnDestroy, OnChanges, SimpleChanges } from '@angular/
 import { CommonModule } from '@angular/common';
 import { ProductLink } from '../product-link/product-link';
 import { FilterTag } from '../filter-tag/filter-tag';
-import { NotFoundPage } from '../../pages/not-found-page/not-found-page';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, ProductLink, FilterTag, NotFoundPage],
+  imports: [CommonModule, ProductLink, FilterTag],
   templateUrl: './product-list.html',
 })
 export class ProductList implements OnDestroy {

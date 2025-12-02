@@ -7,8 +7,7 @@ import { Router, ActivatedRoute, RouterLink } from "@angular/router";
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { PopoverModule, Popover } from 'primeng/popover';
-import { OrderDetailService, OrderDetail } from '../../services/order-detail-service';
-import { OrderService } from '../../services/order-service';
+import { OrderService, OrderDetail } from '../../services/order-service';
 import { NotFoundPage } from '../not-found-page/not-found-page';
 @Component({
   selector: 'app-order-detail-page',
@@ -27,7 +26,7 @@ export class OrderDetailPage implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private orderDetailService: OrderDetailService,
+    private orderDetailService: OrderService,
     private orderService: OrderService,
   ) {}
 
