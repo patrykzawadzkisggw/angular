@@ -3,6 +3,8 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from './auth-service';
 import { Product } from './product-service';
+import { tap } from 'rxjs/operators';
+import { ProductService } from './product-service';
 export interface CreateOrderItemRequest {
   product_id: number;
   quantity: number;
@@ -56,6 +58,7 @@ export interface CartItem {
   img?: string;
   price_before?: number;
   price_before_cents?: number | null;
+  stock?: number;
 }
 
 @Injectable({
@@ -98,12 +101,22 @@ export class CartService {
     return seed;
   }
 
-  constructor(private http: HttpClient, private auth: AuthService) {}
+  constructor(private http: HttpClient, private auth: AuthService, private productService: ProductService) {}
 
   createOrder(payload: CreateOrderRequest): Observable<CreateOrderResponse> {
     const token = this.auth.getToken();
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post<CreateOrderResponse>(`${this.baseUrl}/orders`, payload, { headers });
+    return this.http.post<CreateOrderResponse>(`${this.baseUrl}/orders`, payload, { headers }).pipe(
+      tap(() => {
+        try {
+          // After successful order we decrement cached stock values so UI reflects availability
+          if (payload && Array.isArray((payload as any).items) && (payload as any).items.length) {
+            const adjustments = (payload as any).items.map((it: any) => ({ product_id: Number(it.product_id), quantity: Number(it.quantity) }));
+            this.productService.deductStockForOrder(adjustments);
+          }
+        } catch {}
+      })
+    );
   }
 
   private saveToStorage(items: CartItem[]) {
@@ -321,6 +334,7 @@ export class CartService {
       const img = Array.isArray(p.images) && p.images.length ? p.images[0] : i.img;
       const price_before_cents = (typeof p.price_before_cents === 'number') ? p.price_before_cents : null;
       const price_before = typeof price_before_cents === 'number' ? (price_before_cents / 100) : undefined;
+      const stock = (typeof (p as any).stock === 'number' && Number.isFinite((p as any).stock)) ? Math.max(0, Math.floor((p as any).stock)) : undefined;
       return { ...i, name: p.name ?? i.name, price, img, price_before_cents, price_before };
     });
     this.setItems(updated);

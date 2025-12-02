@@ -34,6 +34,7 @@ export class NavbarComponent implements OnDestroy {
   cartCount$!: Observable<number>;
   suggestions: Array<{ type: 'product' | 'category'; name: string; id?: number }> = [];
   searchHasFocus = false;
+  selectedSuggestionIndex = -1;
   private _subs = new Subscription();
 
   @ViewChild('profileMenu') profileMenu!: Menu;
@@ -47,6 +48,28 @@ export class NavbarComponent implements OnDestroy {
   onQueryChange(val: string) {
     this.query = val;
     this.updateSuggestions();
+  }
+
+  onSuggestionsKeydown(e: KeyboardEvent) {
+    if (!this.suggestions || this.suggestions.length === 0) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      this.selectedSuggestionIndex = Math.min(this.selectedSuggestionIndex + 1, this.suggestions.length - 1);
+      this.searchHasFocus = true;
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      this.selectedSuggestionIndex = Math.max(this.selectedSuggestionIndex - 1, -1);
+    } else if (e.key === 'Enter') {
+      if (this.selectedSuggestionIndex >= 0 && this.selectedSuggestionIndex < this.suggestions.length) {
+        e.preventDefault();
+        const item = this.suggestions[this.selectedSuggestionIndex];
+        this.onSuggestionClick(item);
+      } else {
+      }
+    } else if (e.key === 'Escape') {
+      this.suggestions = [];
+      this.selectedSuggestionIndex = -1;
+    }
   }
 
   onSearchFocus() {
@@ -70,6 +93,7 @@ export class NavbarComponent implements OnDestroy {
 
     const s = this.productService.suggest(q).subscribe((res) => (this.suggestions = res));
     this._subs.add(s);
+    this.selectedSuggestionIndex = -1;
   }
 
   onSuggestionClick(item: { type: 'product' | 'category'; name: string; id?: number }) {
@@ -77,7 +101,7 @@ export class NavbarComponent implements OnDestroy {
     if (item.type === 'product' && item.id != null) {
       this.router.navigate(['/product', item.id]);
     } else if (item.type === 'category') {
-      this.router.navigate(['/search'], { queryParams: { q: item.name }, state: { force: true } });
+      this.router.navigate(['/search'], { queryParams: { category: item.name }, state: { force: true } });
     }
     this.suggestions = [];
   }

@@ -4,6 +4,16 @@
       <label class="block text-sm font-medium text-gray-700">Sortowanie</label>
       <p-select [options]="sortOptions" placeholder="Domyślnie" optionLabel="label" optionValue="value" [(ngModel)]="filters.sort" name="sort" class="w-full mt-1"></p-select>
     </div>
+     <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2">
+        <p-checkbox [(ngModel)]="filters.inStock" binary="true" inputId="inStock" name="inStock"></p-checkbox>
+        <label for="inStock" class="text-sm">Dostępne</label>
+      </div>
+      <div class="flex items-center gap-2">
+        <p-checkbox [(ngModel)]="filters.outOfStock" binary="true" inputId="outOfStock" name="outOfStock"></p-checkbox>
+        <label for="outOfStock" class="text-sm">Niedostępne</label>
+      </div>
+    </div>
     <div class="flex items-center gap-2">
       <p-checkbox [(ngModel)]="filters.okazja" binary="true" inputId="okazja" name="okazja"></p-checkbox>
       <label for="okazja" class="text-sm">Okazje</label>

@@ -7,6 +7,7 @@ export interface Product {
   id: number;
   name: string;
   price_cents: number;
+  stock?: number;
   price_before_cents?: number | null;
   images: string[];
   categories: string[];
@@ -24,6 +25,8 @@ export interface FilterState {
   maxPrice?: number | null;
   sort?: 'price_asc' | 'price_desc' | 'name_asc' | 'name_desc' | 'relevance';
   okazja?: boolean;
+  inStock?: boolean;
+  outOfStock?: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -43,11 +46,29 @@ export class ProductService {
   private _namesBuilt = false;
   private productNameCache: { id: number; name: string }[] = [];
   private categoryCache: string[] = [];
-  // persisted UI filters
   private _filters: FilterState = {};
   private _filtersSubscribers: Array<(f: FilterState) => void> = [];
 
   constructor(private http: HttpClient) {}
+
+  private normalizeProductRaw<T extends any>(p: T): T {
+    if (!p || typeof p !== 'object') return p;
+    const copy: any = { ...p };
+    if (copy.hasOwnProperty('stock')) {
+      const s = copy.stock;
+      if (typeof s === 'number' && Number.isFinite(s)) {
+        copy.stock = Math.max(0, Math.floor(s));
+      } else {
+        delete copy.stock;
+      }
+    }
+    return copy as T;
+  }
+
+  private normalizeArray(arr: any[] | undefined | null) {
+    if (!Array.isArray(arr)) return [] as any[];
+    return arr.map((p) => this.normalizeProductRaw(p));
+  }
 
   getRecommended(forceReload = false): Observable<Product[]> {
     if (!forceReload && this.recommendedCache) {
@@ -60,7 +81,8 @@ export class ProductService {
 
     const req = this.http.get<Product[]>(`${this.baseUrl}/products/recommended`).pipe(
       tap((res) => {
-        this.recommendedCache = { products: res, ts: Date.now() };
+        const normalized = this.normalizeArray(res || []);
+        this.recommendedCache = { products: normalized, ts: Date.now() };
       }),
       shareReplay(1),
       catchError((err) => {
@@ -84,7 +106,7 @@ export class ProductService {
     return this.http
       .get<Product[]>(`${this.baseUrl}/products/search`, { params })
       .pipe(
-        tap((res) => this.searchCache.set(key, { products: res, ts: Date.now() })),
+        tap((res) => this.searchCache.set(key, { products: this.normalizeArray(res), ts: Date.now() })),
         catchError(() => of([]))
       );
   }
@@ -99,7 +121,7 @@ export class ProductService {
     return this.http
       .get<Product[]>(`${this.baseUrl}/products/by_ids`, { params })
       .pipe(
-        tap((res) => this.byIdsCache.set(key, { products: res, ts: Date.now() })),
+        tap((res) => this.byIdsCache.set(key, { products: this.normalizeArray(res), ts: Date.now() })),
         catchError(() => of([]))
       );
   }
@@ -115,7 +137,8 @@ export class ProductService {
 
     const req = this.http.get<Product[]>(`${this.baseUrl}/products`).pipe(
       tap((res) => {
-        this.allCache = { products: res, ts: Date.now() };
+        const normalized = this.normalizeArray(res || []);
+        this.allCache = { products: normalized, ts: Date.now() };
       }),
       shareReplay(1),
       catchError((err) => {
@@ -139,8 +162,9 @@ export class ProductService {
     return this.http.get<ProductDetail>(`${this.baseUrl}/products/${id}`).pipe(
       tap((res) => {
         if (res && typeof res.id === 'number') {
-          this.productCache.set(id, { detail: res, ts: Date.now() });
-          this.propagateProductToCaches(res);
+          const normalized = this.normalizeProductRaw(res);
+          this.productCache.set(id, { detail: normalized, ts: Date.now() });
+          this.propagateProductToCaches(normalized);
         }
       }),
       catchError((err) => throwError(() => err))
@@ -300,6 +324,96 @@ export class ProductService {
       else if (f.sort === 'name_desc') res.sort((a, b) => (b.name || '').localeCompare(a.name || ''));
     }
 
+    // Availability filter: if exactly one of inStock / outOfStock is selected, filter accordingly.
+    const wantIn = !!f.inStock;
+    const wantOut = !!f.outOfStock;
+    if (wantIn !== wantOut) {
+      if (wantIn) {
+        // include products with stock > 0; if stock is undefined treat as available
+        res = res.filter((p) => {
+          if (p == null) return false;
+          if (typeof (p as any).stock === 'number') return (p as any).stock > 0;
+          return true;
+        });
+      } else {
+        // wantOut only: include only products with stock === 0
+        res = res.filter((p) => {
+          if (p == null) return false;
+          return typeof (p as any).stock === 'number' ? (p as any).stock === 0 : false;
+        });
+      }
+    }
+
     return res;
+  }
+
+  deductStockForOrder(items: Array<{ product_id: number; quantity: number }>) {
+    if (!Array.isArray(items) || items.length === 0) return;
+
+    const byId = new Map<number, number>();
+    for (const it of items) {
+      const id = Number(it?.product_id);
+      const qty = Math.max(0, Math.floor(Number(it?.quantity) || 0));
+      if (!Number.isFinite(id) || id <= 0 || qty <= 0) continue;
+      byId.set(id, (byId.get(id) || 0) + qty);
+    }
+    if (!byId.size) return;
+
+    const dec = (p: any, total: number) => {
+      if (!p) return p;
+      const cur = typeof p.stock === 'number' ? p.stock : undefined;
+      if (typeof cur === 'number') {
+        const next = Math.max(0, cur - total);
+        p.stock = next;
+      }
+      return p;
+    };
+
+    for (const [id, tot] of byId.entries()) {
+      const cached = this.productCache.get(id);
+      if (cached && cached.detail) {
+        cached.detail = dec({ ...cached.detail }, tot);
+        this.productCache.set(id, { detail: cached.detail, ts: Date.now() });
+      }
+    }
+
+    if (this.allCache && Array.isArray(this.allCache.products)) {
+      const arr = this.allCache.products.map((p) => {
+        const tot = byId.get(p.id);
+        return tot ? dec({ ...p }, tot) : p;
+      });
+      this.allCache = { products: arr as Product[], ts: Date.now() };
+    }
+
+    if (this.recommendedCache && Array.isArray(this.recommendedCache.products)) {
+      const arr = this.recommendedCache.products.map((p) => {
+        const tot = byId.get(p.id);
+        return tot ? dec({ ...p }, tot) : p;
+      });
+      this.recommendedCache = { products: arr as Product[], ts: Date.now() };
+    }
+
+    if (this.byIdsCache && this.byIdsCache.size) {
+      for (const [key, val] of Array.from(this.byIdsCache.entries())) {
+        if (!val || !Array.isArray(val.products)) continue;
+        const updated = val.products.map((p) => {
+          const tot = byId.get(p.id);
+          return tot ? dec({ ...p }, tot) : p;
+        });
+        this.byIdsCache.set(key, { products: updated as Product[], ts: Date.now() });
+      }
+    }
+
+    if (this.searchCache && this.searchCache.size) {
+      for (const k of Array.from(this.searchCache.keys())) {
+        const entry = this.searchCache.get(k);
+        if (!entry || !Array.isArray(entry.products)) continue;
+        const updated = entry.products.map((p: any) => {
+          const tot = byId.get(p.id);
+          return tot ? dec({ ...p }, tot) : p;
+        });
+        this.searchCache.set(k, { products: updated as Product[], ts: Date.now() });
+      }
+    }
   }
 }

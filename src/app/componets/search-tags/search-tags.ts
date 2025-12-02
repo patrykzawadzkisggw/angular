@@ -21,6 +21,11 @@ export class SearchTags {
   constructor(private router: Router) {}
 
   onTagClick(tag: SearchTag) {
-    this.router.navigate(['/search'], { queryParams: { q: tag.category || tag.name } });
+    // If the tag has a machine category value, pass it as `category` in URL; otherwise use `q`
+    if (tag.category) {
+      this.router.navigate(['/search'], { queryParams: { category: tag.category } });
+    } else {
+      this.router.navigate(['/search'], { queryParams: { q: tag.name } });
+    }
   }
 }

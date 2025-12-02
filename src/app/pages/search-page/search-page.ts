@@ -53,6 +53,7 @@ export class SearchPage implements OnDestroy {
 
   private performSearchFromRoute() {
     const q = this.route.snapshot.queryParamMap.get('q') || '';
+    const category = this.route.snapshot.queryParamMap.get('category') || '';
 
     const state = (window && (window.history && (window.history.state || {}))) || {};
     const force = !!(state && (state as any).force);
@@ -67,11 +68,27 @@ export class SearchPage implements OnDestroy {
     }
 
     this.startLoading();
-    const s = this.productService
-      .search(q, force)
+    const source$ = q ? this.productService.search(q, force) : this.productService.getAll(force);
+
+    const s = source$
       .pipe(finalize(() => this.stopLoading()))
       .subscribe((products: any[]) => {
-        const filtered = this.productService.applyFilters(products as any[]);
+        let list = products || [];
+        if (category) {
+          const catLower = String(category).toLowerCase();
+          list = list.filter((p: any) => {
+            if (!p) return false;
+            if (Array.isArray(p.categories) && p.categories.length) {
+              return p.categories.some((c: any) => String(c).toLowerCase() === catLower);
+            }
+            if ((p as any).category) {
+              return String((p as any).category).toLowerCase() === catLower;
+            }
+            return false;
+          });
+        }
+
+        const filtered = this.productService.applyFilters(list as any[]);
         const groups = new Map<string, any[]>();
         (filtered || []).forEach((p) => {
           let cat = 'Inne';

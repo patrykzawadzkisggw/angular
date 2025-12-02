@@ -36,9 +36,14 @@
                                 <div class="flex flex-col justify-between">
                                     <span class="font-semibold" [ngClass]="{'line-through text-gray-400': (hasInvalid$ | async) && isInvalid(product.id)}">{{ product.name }}</span>
                                     <div class="text-sm">
-                                        
                                         <span [ngClass]="{'text-gray-400 line-through': (hasInvalid$ | async) && isInvalid(product.id), 'text-gray-600': !((hasInvalid$ | async) && isInvalid(product.id))}">{{ product.price ? (product.price | number:'1.2-2') : ((product.price_cents ? (product.price_cents/100) : 0) | number:'1.2-2') }} zł </span>
                                         <span *ngIf="product.price_before_cents || product.price_before" class="text-sm text-gray-400 line-through mr-2">{{ product.price_before_cents ? ((product.price_before_cents/100) | number:'1.2-2') : (product.price_before | number:'1.2-2') }} zł</span>
+                                    </div>
+                                    <div class="text-sm text-gray-600 mt-1">
+                                        <span *ngIf="product.stock !== undefined && product.stock !== null">
+                                            <span *ngIf="product.stock > 0">Dostępne: <span class="font-medium">{{ product.stock }}</span></span>
+                                            <span *ngIf="product.stock === 0" class="text-red-600 font-semibold">Brak w magazynie</span>
+                                        </span>
                                     </div>
                                 </div>
                             </a>

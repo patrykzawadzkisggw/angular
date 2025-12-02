@@ -8,7 +8,12 @@
 			<div class="flex items-center gap-3">
 				<span class="text-lg font-semibold text-green-600">{{ product?.price_cents ? ((product.price_cents/100) | number:'1.2-2') + ' zł' : 'Brak ceny' }}</span>
 				<span *ngIf="product?.price_before_cents" class="text-sm text-gray-400 line-through">{{ (product.price_before_cents/100) | number:'1.2-2' }} zł</span>
-				
+			</div>
+			<div class="mt-2">
+				<span *ngIf="product?.stock !== undefined && product?.stock !== null" class="text-sm text-gray-600">
+					<span *ngIf="product.stock > 0">Dostępne: <span class="font-medium">{{ product.stock }}</span></span>
+					<span *ngIf="product.stock === 0" class="text-red-600 font-semibold">Brak w magazynie</span>
+				</span>
 			</div>
 		</div>
 	</div>
