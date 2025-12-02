@@ -4,12 +4,31 @@
     <div class="grid md:grid-cols-[1fr_420px] gap-6 mt-4">
       <!-- galeria -->
       <div class=" p-4">
-        <p-galleria [value]="images" [showIndicators]="false" [showItemNavigatorsOnHover]="true" [showItemNavigators]="true" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px', 'border': 'none' }">
+        <p-galleria
+            [value]="images"
+            [showIndicators]="false"
+            [showItemNavigatorsOnHover]="true"
+            [showItemNavigators]="true"
+            [showThumbnails]="true"
+            [circular]="true"
+            [responsiveOptions]="responsiveOptions"
+            [containerStyle]="{ 'max-width': '640px', 'border': 'none' }"
+        >
     <ng-template #item let-item>
-        <img [src]="item.itemImageSrc" style="width: 100%; display: block;" />
+        <div style="width:100%;height:420px;display:flex;align-items:center;justify-content:center;background:#fff;">
+            <img
+                [src]="item.itemImageSrc"
+                [alt]="(product$ | async)?.name"
+                style="width:100%;height:100%;object-fit:contain;display:block;"
+            />
+        </div>
     </ng-template>
     <ng-template #thumbnail let-item>
-        <img [src]="item.thumbnailImageSrc" style="display: block;" />
+        <img
+            [src]="item.thumbnailImageSrc"
+            [alt]="(product$ | async)?.name"
+            style="display:block;width:60px;height:60px;object-fit:cover;"
+        />
     </ng-template>
 </p-galleria>
 
@@ -21,8 +40,12 @@
 
                     <div class="flex flex-col gap-3 h-full justify-center  w-full test">
                         <div class="text-2xl font-semibold">{{ (product$ | async)?.name }}</div>
-                        <div class="text-xl text-gray-800 font-bold">{{ (((product$ | async)?.price_cents ?? 0) / 100) | number:'1.2-2' }} zł</div>
-                        <div class="text-sm text-gray-600">Dostępne: <span class="font-medium">{{ (product$ | async)?.stock ?? '-' }}</span></div>
+                        <div class="flex items-baseline gap-3">
+                            <span class="text-xl text-gray-800 font-bold">{{ (((product$ | async)?.price_cents ?? 0) / 100) | number:'1.2-2' }} zł</span>
+                            <span *ngIf="((product$ | async)?.price_before_cents ?? 0) > 0" class="text-sm text-gray-400 line-through">{{ (((product$ | async)?.price_before_cents ?? 0) / 100) | number:'1.2-2' }} zł</span>
+                            
+                        </div>
+                        <div class="text-sm text-gray-600">Dostępne <span class="font-medium">{{ (product$ | async)?.stock ?? '-' }}</span></div>
                         <div class="pt-2">
                               <button pButton type="button" (click)="addToCart()" [disabled]="(((product$ | async)?.stock) ?? 0) <= 0" class="w-full">Dodaj do koszyka</button>
                         </div>
@@ -34,7 +57,7 @@
 
     <!-- szczegoly -->
     <div class="mt-6">
-<h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 ">O Produkcie</h2>
+<h2 class="mb-4 text-3xl font-semibold tracking-tight  text-gray-700 ">O Produkcie</h2>
       <p-accordion>
     <p-accordion-panel value="0">
         <p-accordion-header>Szczegóły</p-accordion-header>
@@ -66,7 +89,7 @@
     </div>
 
     <section class="recommendations mt-24">
-    <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 ">Rekomendacje</h2>
+    <h2 class="mb-4 text-3xl font-semibold tracking-tight text-gray-900 ">Rekomendacje</h2>
     <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-5 p-5 pl-0 pr-0">
         @for(product of (recommended$ | async); track product.id) {
         <app-product-link [product]="product" />

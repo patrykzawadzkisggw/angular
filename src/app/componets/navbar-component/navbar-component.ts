@@ -97,6 +97,7 @@ export class NavbarComponent implements OnDestroy {
 
   onSearch() {
     const trimmed = this.query.trim();
+    if(trimmed === '')  return;
     this.router.navigate(
       ['/search'],
       trimmed ? { queryParams: { q: trimmed }, state: { force: true } } : undefined

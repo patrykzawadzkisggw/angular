@@ -1,5 +1,15 @@
 <a [routerLink]="['/product', product?.id]" class="block">
-	<img [src]="product?.images[0] || 'item.png'" [alt]="product?.name || 'Produkt'" class="w-full"/>
-	<div class="mb-1">{{ product?.name || 'Produkt' }}</div>
-	<div class="font-bold price">{{ product?.price_cents ? (product.price_cents/100 + ' zł') : '' }}</div>
+	<div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow transform hover:-translate-y-0.5 transition-all duration-150">
+		<div class="h-40 w-full overflow-hidden bg-gray-50">
+			<img [src]="product?.images[0] || 'item.png'" [alt]="product?.name || 'Produkt'" class="w-full h-full object-cover" />
+		</div>
+		<div class="p-3">
+			<div class="mb-2 text-lg font-medium text-gray-700 truncate">{{ product?.name || 'Produkt' }}</div>
+			<div class="flex items-center gap-3">
+				<span class="text-lg font-semibold text-green-600">{{ product?.price_cents ? ((product.price_cents/100) | number:'1.2-2') + ' zł' : 'Brak ceny' }}</span>
+				<span *ngIf="product?.price_before_cents" class="text-sm text-gray-400 line-through">{{ (product.price_before_cents/100) | number:'1.2-2' }} zł</span>
+				
+			</div>
+		</div>
+	</div>
 </a>

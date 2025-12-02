@@ -54,7 +54,12 @@ export class ProductPage {
     if (!prod) return;
     const price = typeof prod.price_cents === 'number' ? prod.price_cents / 100 : 0;
     try {
-      this.cart.addItem({ id: prod.id, name: prod.name, price, quantity: 1, img: Array.isArray(prod.images) && prod.images.length ? prod.images[0] : undefined });
+      const item: any = { id: prod.id, name: prod.name, price, quantity: 1, img: Array.isArray(prod.images) && prod.images.length ? prod.images[0] : undefined };
+      if (typeof prod.price_before_cents === 'number') {
+        item.price_before_cents = prod.price_before_cents;
+        item.price_before = prod.price_before_cents / 100;
+      }
+      this.cart.addItem(item);
     } catch {}
   }
 }

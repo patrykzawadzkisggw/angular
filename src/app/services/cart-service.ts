@@ -54,6 +54,8 @@ export interface CartItem {
   price: number;
   quantity: number;
   img?: string;
+  price_before?: number;
+  price_before_cents?: number | null;
 }
 
 @Injectable({
@@ -317,7 +319,9 @@ export class CartService {
       if (!p) return i;
       const price = (typeof p.price_cents === 'number') ? (p.price_cents / 100) : i.price;
       const img = Array.isArray(p.images) && p.images.length ? p.images[0] : i.img;
-      return { ...i, name: p.name ?? i.name, price, img };
+      const price_before_cents = (typeof p.price_before_cents === 'number') ? p.price_before_cents : null;
+      const price_before = typeof price_before_cents === 'number' ? (price_before_cents / 100) : undefined;
+      return { ...i, name: p.name ?? i.name, price, img, price_before_cents, price_before };
     });
     this.setItems(updated);
   }

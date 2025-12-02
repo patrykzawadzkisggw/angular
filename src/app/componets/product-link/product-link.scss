@@ -1,14 +1,5 @@
-img {
-    background-color: #fef5fd;
-    border-radius: 1rem;
-}
+/* Styles replaced by Tailwind utility classes in the template. Keep file to avoid missing stylesheet errors. */
 
 :host {
-    display: grid;
-    gap: .5rem;
-    cursor: pointer;
-}
-
-.price {
-    font-size: larger;
+  display: block;
 }

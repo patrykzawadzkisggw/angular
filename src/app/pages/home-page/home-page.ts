@@ -9,7 +9,7 @@ import { ProductList } from '../../componets/product-list/product-list';
 import { FilterDrawer } from '../../componets/filter-drawer/filter-drawer';
 import { SearchTags } from '../../componets/search-tags/search-tags';
 import { BehaviorSubject, Subscription, Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, map, distinctUntilChanged } from 'rxjs/operators';
 import { GalleriaModule } from 'primeng/galleria';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
@@ -34,10 +34,10 @@ export class HomePage implements OnInit, OnDestroy {
   private _filtersUnsub?: () => void;
   isMobile = false;
   tags: SearchTag[] = [
-    { name: 'Elektronika', image: 't1.svg', category: 'electronics' },
-    { name: 'Moda', image: 't2.svg', category: 'fashion' },
-    { name: 'Dom', image: 't3.svg', category: 'home' },
-    { name: 'Sport', image: 't3.svg', category: 'sports' }
+    { name: 'Chleb', image: 't1.svg', category: 'Produkty zbożowe' },
+    { name: 'Sery', image: 't2.svg', category: 'Sery' },
+    { name: 'Napoje', image: 't3.svg', category: 'Napoje' },
+    { name: 'Kawy', image: 't3.svg', category: 'Kawy' }
   ];
 
    images = ['1.jpg', '2.jpg', '3.jpg'];
@@ -55,9 +55,15 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
-      this.isMobile = result.matches;
-    });
+    // Use a stable observable for handset-sized screens and only update when value actually changes
+    const bpSub = this.breakpointObserver
+      .observe(['(max-width: 767px)'])
+      .pipe(map(r => r.matches), distinctUntilChanged())
+      .subscribe((matches) => {
+        this.isMobile = matches;
+      });
+
+    this._subs.add(bpSub);
   }
 
   private startLoading() {

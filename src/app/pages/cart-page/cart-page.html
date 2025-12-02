@@ -11,7 +11,12 @@
     </p-stepper>
 
     <p-card class="cart-card w-full md:col-start-1 md:row-start-2">
-        <div class="cart-card__heading text-xl font-semibold mb-3">Koszyk</div>
+        <div class="flex items-center mb-3">
+            <div class="cart-card__heading text-xl font-semibold">Koszyk</div>
+            <div class="ml-auto">
+                <button pButton type="button" class="p-button-text p-button-sm" icon="pi pi-trash" aria-label="Wyczyść koszyk" (click)="showClearCartConfirm = true"></button>
+            </div>
+        </div>
 
         @if (hasInvalid$ | async) {
             <div class="mb-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded p-3">
@@ -30,7 +35,11 @@
                                 </div>
                                 <div class="flex flex-col justify-between">
                                     <span class="font-semibold" [ngClass]="{'line-through text-gray-400': (hasInvalid$ | async) && isInvalid(product.id)}">{{ product.name }}</span>
-                                    <span class="text-sm" [ngClass]="{'text-gray-400 line-through': (hasInvalid$ | async) && isInvalid(product.id), 'text-gray-600': !((hasInvalid$ | async) && isInvalid(product.id))}">{{ product.price }} zł</span>
+                                    <div class="text-sm">
+                                        
+                                        <span [ngClass]="{'text-gray-400 line-through': (hasInvalid$ | async) && isInvalid(product.id), 'text-gray-600': !((hasInvalid$ | async) && isInvalid(product.id))}">{{ product.price ? (product.price | number:'1.2-2') : ((product.price_cents ? (product.price_cents/100) : 0) | number:'1.2-2') }} zł </span>
+                                        <span *ngIf="product.price_before_cents || product.price_before" class="text-sm text-gray-400 line-through mr-2">{{ product.price_before_cents ? ((product.price_before_cents/100) | number:'1.2-2') : (product.price_before | number:'1.2-2') }} zł</span>
+                                    </div>
                                 </div>
                             </a>
 
@@ -66,7 +75,12 @@
                     <div class="ml-auto cursor-pointer text-primary" (click)="openCouponDialog()">dodaj</div>
                 </div>
             } @else {
-                <div class="text-green-600">Zniżka {{ (amounts$ | async)?.discountPct ?? 0 }}%</div>
+                <div class="flex items-center">
+                    <div class="text-green-600">Zniżka {{ (amounts$ | async)?.discountPct ?? 0 }}%</div>
+                    <div class="ml-auto">
+                        <button pButton type="button" class="p-button-text p-button-sm" (click)="showRemoveCouponConfirm = true">Usuń</button>
+                    </div>
+                </div>
             }
             <p-button [label]="'Zamów ' + ((((amounts$ | async)?.grandTotal ?? 0) | number:'1.2-2')) + ' zł'"
                       [disabled]="hasInvalid$ | async"
@@ -89,7 +103,12 @@
                         <div class="ml-auto cursor-pointer text-primary" (click)="openCouponDialog()">dodaj</div>
                     </div>
                 } @else {
-                    <div class="text-green-600">Zniżka {{ (amounts$ | async)?.discountPct ?? 0 }}%</div>
+                    <div class="flex items-center">
+                        <div class="text-green-600">Zniżka {{ (amounts$ | async)?.discountPct ?? 0 }}%</div>
+                        <div class="ml-auto">
+                            <button pButton type="button" class="p-button-text p-button-sm" (click)="showRemoveCouponConfirm = true">Usuń</button>
+                        </div>
+                    </div>
                 }
                 <p-button [label]="'Zamów ' + ((((amounts$ | async)?.grandTotal ?? 0) | number:'1.2-2')) + ' zł'"
                           [disabled]="hasInvalid$ | async"
@@ -101,7 +120,7 @@
 </div>
 
 <section class="recommendations mt-24">
-    <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 ">Rekomendacje</h2>
+    <h2 class="mb-4 text-3xl font-semibold tracking-tight text-gray-900 ">Rekomendacje</h2>
     <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-5 p-5 pl-0 pr-0">
         @for(product of (recommended$ | async); track product.id) {
         <app-product-link [product]="product" />
@@ -125,6 +144,26 @@
         <div class="flex gap-2 justify-end mt-2">
             <p-button label="Anuluj" severity="secondary" (onClick)="cancelCouponDialog()" />
             <p-button label="Zastosuj" (onClick)="confirmCoupon()" />
+        </div>
+    </div>
+</p-dialog>
+<!-- Confirm clear cart -->
+<p-dialog header="Wyczyść koszyk" [(visible)]="showClearCartConfirm" [modal]="true" [closable]="false" [style]="{ width: '24rem' }">
+    <div class="space-y-3">
+        <div>Czy na pewno chcesz wyczyścić cały koszyk? Ta operacja usunie wszystkie pozycje.</div>
+        <div class="flex justify-end gap-2">
+            <button pButton type="button" class="p-button-text" (click)="cancelClearCart()">Anuluj</button>
+            <button pButton type="button" (click)="confirmClearCart()">Wyczyść</button>
+        </div>
+    </div>
+</p-dialog>
+<!-- Confirm remove coupon -->
+<p-dialog header="Usuń kupon" [(visible)]="showRemoveCouponConfirm" [modal]="true" [closable]="false" [style]="{ width: '24rem' }">
+    <div class="space-y-3">
+        <div>Czy na pewno chcesz usunąć zastosowany kupon?</div>
+        <div class="flex justify-end gap-2">
+            <button pButton type="button" class="p-button-text" (click)="cancelRemoveCoupon()">Anuluj</button>
+            <button pButton type="button" (click)="confirmRemoveCoupon()">Usuń</button>
         </div>
     </div>
 </p-dialog>

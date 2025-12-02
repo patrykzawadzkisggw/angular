@@ -18,9 +18,9 @@
 								@if (suggestions.length) {
 									<div class="absolute left-0 right-0 mt-2 bg-white border rounded-lg shadow z-50 max-h-64 overflow-auto w-full">
 										@for(item of suggestions; track item.name) {
-											<div (mousedown)="onSuggestionClick(item)" class="px-3 py-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2">
-												<i class="pi {{ item.type === 'product' ? 'pi-box' : 'pi-tags' }} text-violet-600"></i>
-												<div class="text-sm">{{ item.name }}</div>
+											<div (mousedown)="onSuggestionClick(item)" class="px-3 py-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2 min-h-[48px]">
+												<i class="pi {{ item.type === 'product' ? 'pi-box' : 'pi-tags' }} text-violet-600 text-lg"></i>
+												<div class="text-sm font-medium leading-tight">{{ item.name }}</div>
 											</div>
 										}
 									</div>
@@ -28,7 +28,7 @@
 								</div>
 								</form>
 
-			<a routerLink="/cart" class="relative flex items-center gap-1 rounded-full border-2 border-violet-100 bg-white px-3 py-1" aria-label="Koszyk">
+			<a routerLink="/cart" class="relative flex items-center gap-1 rounded-full border-2 border-violet-100 bg-white px-5 py-3" aria-label="Koszyk">
 				<img src="cart.svg" alt="Koszyk" class="h-7 w-7 text-violet-600" />
 				<span class="text-violet-600 text-sm font-semibold">{{ (cartCount$ | async) ?? 0 }}</span>
 			</a>
@@ -52,9 +52,9 @@
 								@if (suggestions.length) {
 									<div class="absolute left-0 mt-2 bg-white border rounded-lg shadow z-50 max-h-64 overflow-auto w-full">
 										@for(item of suggestions; track item.name) {
-											<div (mousedown)="onSuggestionClick(item)" class="px-3 py-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2">
-												<i class="pi {{ item.type === 'product' ? 'pi-box' : 'pi-tags' }} text-violet-600"></i>
-												<div class="text-sm">{{ item.name }}</div>
+											<div (mousedown)="onSuggestionClick(item)" class="px-3 py-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2 min-h-[48px]">
+												<i class="pi {{ item.type === 'product' ? 'pi-box' : 'pi-tags' }} text-violet-600 text-lg"></i>
+												<div class="text-sm font-medium leading-tight">{{ item.name }}</div>
 											</div>
 										}
 									</div>
@@ -104,13 +104,13 @@
 			</button>
 		</div>
 
-		<div class="p-4 space-y-3">
+			<div class="p-4 space-y-3">
 			@if (isLoggedIn()) {
-				<a routerLink="" (click)="closeMobileMenu()" pButton label="Strona główna" icon="pi pi-home" class="w-full"></a>
-				<a routerLink="/orders" (click)="closeMobileMenu()" pButton label="Zamówienia" icon="pi pi-list" class="w-full"></a>
-				<button type="button" pButton label="Wyloguj" icon="pi pi-sign-out" class="w-full p-button-danger" (click)="logout(); closeMobileMenu()"></button>
+				<a routerLink="" (click)="closeMobileMenu()" pButton label="Strona główna" icon="pi pi-home" class="w-full py-3 text-lg font-semibold"></a>
+				<a routerLink="/orders" (click)="closeMobileMenu()" pButton label="Zamówienia" icon="pi pi-list" class="w-full py-3 text-lg font-semibold"></a>
+				<button type="button" pButton label="Wyloguj" icon="pi pi-sign-out" class="w-full py-3 text-lg font-semibold p-button-danger" (click)="logout(); closeMobileMenu()"></button>
 			} @else {
-				<button type="button" pButton label="Zaloguj" icon="pi pi-sign-in" class="w-full" (click)="quickLogin(); closeMobileMenu()"></button>
+				<button type="button" pButton label="Zaloguj" icon="pi pi-sign-in" class="w-full py-3 text-lg font-semibold" (click)="quickLogin(); closeMobileMenu()"></button>
 			}
 		</div>
 	</div>

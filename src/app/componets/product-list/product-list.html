@@ -26,7 +26,7 @@
     } @else {
       @for(category of categories; track category.name) {
         <section class="recommendations mb-8">
-          <h2 class="mb-1 text-4xl tracking-tight font-extrabold text-gray-900 ">{{ category.name }}</h2>
+          <h2 class="mb-1 text-3xl font-semibold tracking-tight text-gray-900 ">{{ category.name }}</h2>
           <div class="grid grid-cols-3 lg:grid-cols-4 gap-5 p-5 pl-0 pr-0">
             @for(product of (category.products); track product.id) {
               <app-product-link [product]="product" />

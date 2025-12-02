@@ -14,8 +14,8 @@
 @if (isMobile) {
   <app-search-tags [tags]="tags" [isMobile]="isMobile"></app-search-tags>
 }
-<div class="mt-4 mb-2">
-    <button pButton type="button" class="p-button-text" (click)="filterVisible = true">Filtry</button>
+<div class="mt-4 mb-2 flex justify-end">
+  <button pButton type="button" class="p-button-text w-auto" (click)="filterVisible = true">Filtry</button>
 </div>
 <app-product-list [categories$]="categories$" [loading$]="loading$"></app-product-list>
 

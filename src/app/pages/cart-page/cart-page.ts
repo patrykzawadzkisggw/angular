@@ -89,6 +89,8 @@ export class CartPage {
   showInvalidCouponDialog = false;
   discountApplied = false;
   couponCode: string = '';
+  showRemoveCouponConfirm = false;
+  showClearCartConfirm = false;
 
   ngOnInit() {
     const st = history.state as any;
@@ -152,6 +154,32 @@ export class CartPage {
         this.couponCode = '';
       }
     });
+  }
+
+  openRemoveCouponConfirm() {
+    this.showRemoveCouponConfirm = true;
+  }
+
+  cancelRemoveCoupon() {
+    this.showRemoveCouponConfirm = false;
+  }
+
+  confirmRemoveCoupon() {
+    this.removeCoupon();
+    this.showRemoveCouponConfirm = false;
+  }
+
+  openClearCartConfirm() {
+    this.showClearCartConfirm = true;
+  }
+
+  cancelClearCart() {
+    this.showClearCartConfirm = false;
+  }
+
+  confirmClearCart() {
+    this.cart.clear();
+    this.showClearCartConfirm = false;
   }
 
   onStepChange(value: number | undefined) {
