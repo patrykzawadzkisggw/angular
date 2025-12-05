@@ -4,7 +4,21 @@
 
 <p-galleria [value]="images" [showItemNavigators]="true" [showThumbnails]="false" [showIndicators]="true" [showItemNavigatorsOnHover]="true" [circular]="true" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'border': 'none' }">
     <ng-template #item let-item>
-        <img [src]="item?.itemImageSrc || item" style="width: 100%; display: block;" />
+      <div class="galleria-img-wrap">
+        <svg class="galleria-placeholder" viewBox="0 0 1000 491" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="phGrad" x1="0" x2="1">
+              <stop offset="0" stop-color="#f3f4f6" />
+              <stop offset="1" stop-color="#e5e7eb" />
+            </linearGradient>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#phGrad)" />
+          <g fill="#9ca3af" font-family="sans-serif" font-size="28" text-anchor="middle">
+            <text x="50%" y="50%" dy=".3em">Ładowanie obrazu</text>
+          </g>
+        </svg>
+        <img [src]="item?.itemImageSrc || item" alt="" class="galleria-real" />
+      </div>
     </ng-template>
     <ng-template #thumbnail let-item>
         <img [src]="item?.thumbnailImageSrc || item" style="display: block;" />

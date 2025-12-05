@@ -49,13 +49,11 @@ export class HomePage implements OnInit, OnDestroy {
 
   constructor(private productService: ProductService, private breakpointObserver: BreakpointObserver) {
     this.categories$ = this._categories.asObservable() as Observable<{ name: string; products: any[] }[]>;
-    // refresh when filters change
     this._filtersUnsub = this.productService.subscribeFilters(() => this.loadAll());
     this.loadAll();
   }
 
   ngOnInit() {
-    // Use a stable observable for handset-sized screens and only update when value actually changes
     const bpSub = this.breakpointObserver
       .observe(['(max-width: 767px)'])
       .pipe(map(r => r.matches), distinctUntilChanged())
