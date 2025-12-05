@@ -174,7 +174,11 @@ export class CartService {
   }
 
   getTotal(): number {
-    return this.getItemsSnapshot().reduce((sum, i) => sum + i.price * i.quantity, 0);
+    const cents = this.getItemsSnapshot().reduce((sum, i) => {
+      const itemCents = Math.round((i.price || 0) * 100) * (i.quantity || 0);
+      return sum + itemCents;
+    }, 0);
+    return Math.round(cents) / 100;
   }
 
   setInvalidProductIds(ids: number[]) {

@@ -48,8 +48,8 @@
                                 </div>
                             </a>
 
-                            <div class="cart-item__actions flex items-center gap-4 mt-4 [@media(min-width:900px)]:mt-0 [@media(min-width:900px)]:w-[230px]">
-                                <div class="cart-item__total font-medium [@media(min-width:900px)]:order-3 [@media(min-width:900px)]:ml-auto" [ngClass]="{'text-gray-400 line-through': (hasInvalid$ | async) && isInvalid(product.id)}">{{ product.quantity * product.price }} zł</div>
+                            <div class="cart-item__actions flex items-center gap-4 mt-4 [@media(min-width:900px)]:mt-0 [@media(min-width:900px)]:w-[235px]">
+                                <div class="cart-item__total font-medium [@media(min-width:900px)]:order-3 [@media(min-width:900px)]:ml-auto" [ngClass]="{'text-gray-400 line-through': (hasInvalid$ | async) && isInvalid(product.id)}">{{ (product.quantity * product.price) | number:'1.2-2' }} zł</div>
                                 <div class="flex-1 [@media(min-width:900px)]:hidden"></div>
                                 <div class="cart-item__remove text-red-500 cursor-pointer hover:underline [@media(min-width:900px)]:order-2" (click)="onRemove(product.id)">Usuń</div>
                                 <app-add-input class="num [@media(min-width:900px)]:order-1"

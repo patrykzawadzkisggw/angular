@@ -47,13 +47,49 @@
                         </div>
                         <div class="text-sm text-gray-600">Dostępne <span class="font-medium">{{ (product$ | async)?.stock ?? '-' }}</span></div>
                         <div class="pt-2">
-                              <button pButton type="button" (click)="addToCart()" [disabled]="(((product$ | async)?.stock) ?? 0) <= 0" class="w-full">Dodaj do koszyka</button>
+                            <button pButton type="button" (click)="openAddDialog()" class="w-full">Dodaj do koszyka</button>
                         </div>
           </div>
       
 
       </div>
     </div>
+
+        <!-- Add quantity dialog -->
+        <p-dialog header="Dodaj do koszyka" [(visible)]="showAddDialog" [modal]="true" [closable]="true" [dismissableMask]="true" [style]="{ width: '20rem' }">
+            <div *ngIf="selectedProduct">
+                <div class="mb-3">
+                    <div class="font-semibold">{{ selectedProduct.name }}</div>
+                    <div class="text-sm text-gray-600">Cena: {{ (selectedProduct.price_cents/100) | number:'1.2-2' }} zł</div>
+                    <div class="text-sm text-gray-600 font-medium">Razem: {{ ((selectedProduct.price_cents/100) * (addQuantity || 0)) | number:'1.2-2' }} zł</div>
+                </div>
+                    <div class="mb-3">
+                    <app-add-input [value]="addQuantity" [min]="1" [max]="addMax" (valueChange)="addQuantity = $event" (removed)="cancelAddDialog()"></app-add-input>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button pButton type="button" class="p-button-text" (click)="showAddDialog = false">Anuluj</button>
+                    <button pButton type="button" (click)="confirmAddToCart()">Dodaj</button>
+                </div>
+            </div>
+        </p-dialog>
+
+        <!-- Unavailable dialog -->
+        <p-dialog header="Brak dostępności" [(visible)]="showUnavailableDialog" [modal]="true" [closable]="true" [dismissableMask]="true" [style]="{ width: '20rem' }">
+            <div>Przykro nam — ten produkt jest obecnie niedostępny.</div>
+            <div class="flex justify-end mt-4">
+                <button pButton type="button" (click)="showUnavailableDialog = false">OK</button>
+            </div>
+        </p-dialog>
+
+        <!-- Added success dialog (requires user confirmation) -->
+        <p-dialog header="Dodano" [(visible)]="showAddedDialog" [modal]="true" [closable]="true" [dismissableMask]="true" [style]="{ width: '20rem' }">
+            <div>
+                <p class="m-0">Produkt został dodany do koszyka.</p>
+                <div class="flex justify-end mt-4">
+                    <button pButton type="button" label="OK" (click)="showAddedDialog = false"></button>
+                </div>
+            </div>
+        </p-dialog>
 
     <!-- szczegoly -->
     <div class="mt-6">

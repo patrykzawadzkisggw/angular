@@ -4,3 +4,8 @@
     max-width: 350px;
   }
 }
+
+/* Keep page scrollbar visible even when PrimeNG dialog adds p-overflow-hidden to body */
+::ng-deep body.p-overflow-hidden {
+  overflow: auto !important;
+}

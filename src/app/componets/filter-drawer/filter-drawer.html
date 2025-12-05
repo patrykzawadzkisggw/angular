@@ -1,4 +1,4 @@
-<p-drawer [(visible)]="visible" header="Filtry" [modal]="true">
+<p-drawer [(visible)]="visible" (visibleChange)="onVisibleChange($event)" header="Filtry" [modal]="true">
   <div class="p-4 space-y-4">
     <div>
       <label class="block text-sm font-medium text-gray-700">Sortowanie</label>

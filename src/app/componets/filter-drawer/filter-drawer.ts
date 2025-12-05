@@ -48,6 +48,11 @@ export class FilterDrawer implements OnInit, OnDestroy {
     if (this._unsub) this._unsub();
   }
 
+  onVisibleChange(v: boolean) {
+    this.visible = !!v;
+    this.visibleChange.emit(!!v);
+  }
+
   apply() {
     const minG = this.parseZlToGrosze(this.minPriceZl);
     const maxG = this.parseZlToGrosze(this.maxPriceZl);
