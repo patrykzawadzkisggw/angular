@@ -1,9 +1,15 @@
 @if (isMobile) {
   <div class="tags-container-mobile">
-    @for (tag of tags; track tag.name) {
+    @for (tag of mobileVisibleTags; track tag.name) {
       <div class="tag-mobile" (click)="onTagClick(tag)">
         <img [src]="tag.image" [alt]="tag.name" />
         <span>{{ tag.name }}</span>
+      </div>
+    }
+    @if (showMobileToggle) {
+      <div class="tag-mobile tag-toggle" (click)="toggleMobileTags()">
+        <img src="all.svg" [alt]="showAllMobile ? 'Zwiń' : 'Wszystkie'" />
+        <span>{{ showAllMobile ? 'Zwiń' : 'Wszystkie' }}</span>
       </div>
     }
   </div>

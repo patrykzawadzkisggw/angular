@@ -33,12 +33,28 @@ export class HomePage implements OnInit, OnDestroy {
   private _subs = new Subscription();
   private _filtersUnsub?: () => void;
   isMobile = false;
-  tags: SearchTag[] = [
-    { name: 'Chleb', image: 't1.svg', category: 'Produkty zbożowe' },
-    { name: 'Sery', image: 't2.svg', category: 'Sery' },
-    { name: 'Napoje', image: 't3.svg', category: 'Napoje' },
-    { name: 'Kawy', image: 't3.svg', category: 'Kawy' }
-  ];
+ tags: SearchTag[] = [
+  { name: 'Bezglutenowe', image: 'gluten.svg', category: 'Bezglutenowe' },
+  { name: 'Herbaty', image: 'drink.svg', category: 'Herbaty' },
+  { name: 'Kawy', image: 'drink.svg', category: 'Kawy' },
+ { name: 'Mięso', image: 'chicken.svg', category: 'Mięso' },
+  { name: 'Mleczarnia', image: 'milk.svg', category: 'Mleczarnia' },
+  { name: 'Mrożonki', image: 'prod.svg', category: 'Mrożonki' },
+  { name: 'Nabiał', image: 'meat.svg', category: 'Nabiał' },
+  { name: 'Napoje', image: 'drink.svg', category: 'Napoje' },
+  { name: 'Oleje', image: 'oil.svg', category: 'Oleje' },
+  { name: 'Owoce', image: 'fruit.svg', category: 'Owoce' },
+  { name: 'Piekarnia', image: 'bread2.svg', category: 'Piekarnia' },
+   { name: 'Przekąski', image: 'bread.svg', category: 'Przekąski' },
+  { name: 'Przyprawy', image: 'carrot.svg', category: 'Przyprawy' },
+  { name: 'Ryby', image: 'fish.svg', category: 'Ryby' },
+  { name: 'Sery', image: 'cheese.svg', category: 'Sery' },
+  { name: 'Słodycze', image: 'badges.svg', category: 'Słodycze' },
+  { name: 'Warzywa', image: 'vegetables.svg', category: 'Warzywa' },
+  { name: 'Wędliny', image: 'beef.svg', category: 'Wędliny' },
+  { name: 'Zbożowe', image: 'flour.svg', category: 'Zbożowe' }
+];
+
 
    images = ['1.jpg', '2.jpg', '3.jpg'];
   responsiveOptions: any[] = [

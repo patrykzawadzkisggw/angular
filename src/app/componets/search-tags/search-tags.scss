@@ -1,12 +1,40 @@
 .tags-container {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 1rem;
   justify-content: flex-start;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.25rem;
+
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.tags-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tags-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tags-container::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 9999px;
+}
+
+.tags-container:hover {
+  scrollbar-color: #c4c4c4 transparent;
+}
+
+.tags-container:hover::-webkit-scrollbar-thumb {
+  background: #c4c4c4;
 }
 
 .tag {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.35rem 0.75rem;
@@ -14,7 +42,9 @@
   background-color: #f3f4f6;
   cursor: pointer;
   transition: background-color 0.2s;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .tag:hover {
@@ -48,6 +78,10 @@
   padding: 0.5rem;
   cursor: pointer;
   text-align: center;
+}
+
+.tag-toggle {
+  font-weight: 600;
 }
 
 .tag-mobile img {
