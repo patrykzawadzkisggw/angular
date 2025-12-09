@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 type TokenResponse = { token: string };
 
@@ -8,7 +9,7 @@ type TokenResponse = { token: string };
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly baseUrl = 'https://securebox.hopto.org:8080/api';
+  private readonly baseUrl = environment.apiUrl;
   private readonly storageKey = 'auth_token';
 
   constructor(private http: HttpClient) {}

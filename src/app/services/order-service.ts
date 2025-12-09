@@ -11,6 +11,7 @@ import {
   throwError,
 } from 'rxjs';
 import { AuthService } from './auth-service';
+import { environment } from '../../environments/environment';
 
 export interface OrderStatusResponse {
   message: string;
@@ -52,7 +53,7 @@ export interface OrderDetail {
   providedIn: 'root',
 })
 export class OrderService {
-  private readonly baseUrl = 'https://securebox.hopto.org:8080/api';
+  private readonly baseUrl = environment.apiUrl;
 
   private ordersCache: Order[] | null = null;
   private orderDetailsCache = new Map<number, any>();

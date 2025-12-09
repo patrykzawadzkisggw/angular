@@ -5,6 +5,7 @@ import { AuthService } from './auth-service';
 import { Product } from './product-service';
 import { tap } from 'rxjs/operators';
 import { ProductService } from './product-service';
+import { environment } from '../../environments/environment';
 export interface CreateOrderItemRequest {
   product_id: number;
   quantity: number;
@@ -80,8 +81,8 @@ export class CartService {
   private readonly discountSubject = new BehaviorSubject<{ code: string; percentage: number } | null>(this.loadDiscountFromStorage());
   readonly discount$ = this.discountSubject.asObservable();
 
-  // backend api base
-  private readonly baseUrl = 'https://securebox.hopto.org:8080/api';
+
+  private readonly baseUrl = environment.apiUrl;
 
   private loadFromStorage(): CartItem[] {
     try {

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of, throwError, shareReplay } from 'rxjs';
 import { tap, catchError, map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface Product {
   id: number;
@@ -31,7 +32,7 @@ export interface FilterState {
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  private readonly baseUrl = 'https://securebox.hopto.org:8080/api';
+  private readonly baseUrl = environment.apiUrl;
 
   private recommendedCache: { products: Product[]; ts: number } | null = null;
   private recommendedRequest: Observable<Product[]> | null = null;

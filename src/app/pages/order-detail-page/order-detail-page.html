@@ -64,7 +64,7 @@
                 <tr>
                     <td style="padding-left: 0;padding-right: 0;">
                         <div class="prod cursor-pointer" [routerLink]="['/product', product.product_id]">
-                            <div class="colA"><img src="orange.png" alt="" /></div>
+                            <div class="colA"><img [src]="product.image" alt="" /></div>
                             <div class="colB">
                                 <span class="block name">{{ product.name }}</span>
                                 <span class="block price">{{ (product.price_cents / 100) | number:'1.2-2' }} zł</span>
