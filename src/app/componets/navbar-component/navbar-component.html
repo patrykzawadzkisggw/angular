@@ -18,8 +18,7 @@
 								@if (suggestions.length) {
 									<div class="absolute left-0 right-0 mt-2 bg-white border rounded-lg shadow z-50 max-h-64 overflow-auto w-full">
 										@for(item of suggestions; track item.name; let i = $index) {
-											<div (mousedown)="onSuggestionClick(item)" class="px-3 py-2 cursor-pointer flex items-center gap-2 min-h-[48px]"
-												 [class.hover\:bg-gray-50]="true"
+												<div #mobileSuggestItem (mousedown)="onSuggestionClick(item)" class="px-3 py-2 cursor-pointer flex items-center gap-2 min-h-[48px] hover:bg-gray-50"
 												 [class.bg-violet-50]="i === selectedSuggestionIndex">
 												<i class="pi {{ item.type === 'product' ? 'pi-box' : 'pi-tags' }} text-violet-600 text-lg"></i>
 												<div class="text-sm font-medium leading-tight">{{ item.name }}</div>
@@ -30,7 +29,7 @@
 								</div>
 								</form>
 
-			<a routerLink="/cart" class="relative flex items-center gap-1 rounded-full border-2 border-violet-100 bg-white px-5 py-3" aria-label="Koszyk">
+			<a routerLink="/cart" class="relative flex items-center gap-1 rounded-full border-2 border-violet-100 bg-white px-5 py-2.5" aria-label="Koszyk">
 				<img src="cart.svg" alt="Koszyk" class="h-7 w-7 text-violet-600" />
 				<span class="text-violet-600 text-sm font-semibold">{{ (cartCount$ | async) ?? 0 }}</span>
 			</a>
@@ -54,8 +53,7 @@
 								@if (suggestions.length) {
 									<div class="absolute left-0 mt-2 bg-white border rounded-lg shadow z-50 max-h-64 overflow-auto w-full">
 										@for(item of suggestions; track item.name; let i = $index) {
-											<div (mousedown)="onSuggestionClick(item)" class="px-3 py-2 cursor-pointer flex items-center gap-2 min-h-[48px]"
-												 [class.hover\:bg-gray-50]="true"
+											<div #desktopSuggestItem (mousedown)="onSuggestionClick(item)" class="px-3 py-2 cursor-pointer flex items-center gap-2 min-h-[48px] hover:bg-gray-50"
 												 [class.bg-violet-50]="i === selectedSuggestionIndex">
 												<i class="pi {{ item.type === 'product' ? 'pi-box' : 'pi-tags' }} text-violet-600 text-lg"></i>
 												<div class="text-sm font-medium leading-tight">{{ item.name }}</div>
@@ -68,7 +66,7 @@
 
 			<!-- Right: cart + profile/menu/login -->
 			<div class="flex items-center gap-3">
-				<a routerLink="/cart" class="inline-flex items-center rounded-full border-2 border-violet-100 bg-violet-100 pl-1 pr-2 py-1" aria-label="Koszyk">
+				<a routerLink="/cart" class="inline-flex items-center rounded-full border-2 border-violet-100 bg-violet-100 hover:bg-violet-200 transition-colors pl-1 pr-2 py-1" aria-label="Koszyk">
 					<span class="flex items-center gap-1 rounded-full bg-white px-3 py-1">
 						<img src="cart.svg" alt="Koszyk" class="h-7 w-7 text-violet-600" />
 						<span class="text-violet-600 text-sm font-semibold">{{ (cartCount$ | async) ?? 0 }}</span>
@@ -86,6 +84,7 @@
 				} @else {
 					<button type="button" (click)="quickLogin()" aria-label="Zaloguj"
 						class="inline-flex items-center justify-center gap-2 rounded-full border-2 border-violet-300 bg-white hover:bg-violet-50 active:bg-violet-100 text-violet-700 px-4 py-2 text-sm shadow-sm transition">
+						<div class="h-7"></div>
 						<i class="pi pi-sign-in text-violet-600 text-base"></i>
 						<span class="font-medium">Zaloguj</span>
 					</button>

@@ -13,10 +13,11 @@
 	<span class="value text-center font-medium tabular-nums">{{ value }}</span>
 
 	<p-button
+		class="bg-white rounded-full"
 		[rounded]="true"
-		[text]="false"
-		[raised]="true"
-		[severity]="'success'"
+		[text]="true"
+		[raised]="false"
+		[severity]="'secondary'"
 		icon="pi pi-plus"
 		(onClick)="increase()"
 		[disabled]="max !== undefined && value >= max"

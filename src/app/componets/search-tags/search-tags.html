@@ -2,13 +2,17 @@
   <div class="tags-container-mobile">
     @for (tag of mobileVisibleTags; track tag.name) {
       <div class="tag-mobile" (click)="onTagClick(tag)">
-        <img [src]="tag.image" [alt]="tag.name" />
+        <div class="tag-img-wrap">
+          <img [src]="tag.image" [alt]="tag.name" />
+        </div>
         <span>{{ tag.name }}</span>
       </div>
     }
     @if (showMobileToggle) {
       <div class="tag-mobile tag-toggle" (click)="toggleMobileTags()">
-        <img src="all.svg" [alt]="showAllMobile ? 'Zwiń' : 'Wszystkie'" />
+        <div class="tag-img-wrap">
+          <img src="all.svg" [alt]="showAllMobile ? 'Zwiń' : 'Wszystkie'" />
+        </div>
         <span>{{ showAllMobile ? 'Zwiń' : 'Wszystkie' }}</span>
       </div>
     }
@@ -17,7 +21,9 @@
   <div class="tags-container">
     @for (tag of tags; track tag.name) {
       <div class="tag" (click)="onTagClick(tag)">
-        <img [src]="tag.image" [alt]="tag.name" />
+        <div class="tag-img-wrap">
+          <img [src]="tag.image" [alt]="tag.name" />
+        </div>
         <span>{{ tag.name }}</span>
       </div>
     }

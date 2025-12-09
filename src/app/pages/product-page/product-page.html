@@ -10,6 +10,7 @@
             [showItemNavigatorsOnHover]="true"
             [showItemNavigators]="true"
             [showThumbnails]="true"
+            [showThumbnailNavigators]="isMobile"
             [circular]="true"
             [responsiveOptions]="responsiveOptions"
             [containerStyle]="{ 'max-width': '640px', 'border': 'none' }"
@@ -27,6 +28,7 @@
         <img
             [src]="item.thumbnailImageSrc"
             [alt]="(product$ | async)?.name"
+            className="select-none"
             style="display:block;width:60px;height:60px;object-fit:cover;"
         />
     </ng-template>

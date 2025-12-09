@@ -1,7 +1,7 @@
 
-$primary: #fef5fd;
+$primary: #ede9fe38;
 $black-600: #686069;
-$text-primary: #b6349a;
+$text-primary: #7c3aed;
 
 .card {
     display: grid;
@@ -39,11 +39,31 @@ $text-primary: #b6349a;
     display: flex;
     gap: 1rem;
     overflow-x: hidden;
-    img {
-        background-color: white;
-        border-radius: .5rem;
-        height: 50px;
-    }
+}
+
+.gallery-thumb {
+    position: relative;
+    background-color: white;
+    border-radius: .5rem;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.gallery-thumb img {
+    height: 50px;
+    width: auto;
+    object-fit: cover;
+    display: block;
+}
+
+.gallery-thumb::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: $text-primary; // #7c3aed
+    opacity: 0.22; 
+    mix-blend-mode: multiply;
+    pointer-events: none;
 
 }
 .items {

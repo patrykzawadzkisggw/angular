@@ -1,6 +1,6 @@
 
 
-
+<div class="mt-10"></div>
 @if (((cartItems$ | async)?.length || 0) > 0) {
 <div class="cart-layout space-y-4 md:grid md:grid-cols-[1fr_300px] md:gap-4 md:space-y-0">
     <p-stepper [value]="1" class="md:col-span-1" (valueChange)="onStepChange($event)">
@@ -77,7 +77,7 @@
             @if (!discountApplied) {
                 <div class="flex items-center w-full">
                     <div>kupon</div>
-                    <div class="ml-auto cursor-pointer text-primary" (click)="openCouponDialog()">dodaj</div>
+                    <div class="ml-auto cursor-pointer text-primary hover:underline" (click)="openCouponDialog()">dodaj</div>
                 </div>
             } @else {
                 <div class="flex items-center">
@@ -105,7 +105,7 @@
                 @if (!discountApplied) {
                     <div class="flex items-center w-full">
                         <div>kupon</div>
-                        <div class="ml-auto cursor-pointer text-primary" (click)="openCouponDialog()">dodaj</div>
+                        <div class="ml-auto cursor-pointer text-primary hover:underline" (click)="openCouponDialog()">dodaj</div>
                     </div>
                 } @else {
                     <div class="flex items-center">

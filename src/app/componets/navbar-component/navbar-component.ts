@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnDestroy } from '@angular/core';
+import { Component, ViewChild, OnDestroy, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -38,6 +38,8 @@ export class NavbarComponent implements OnDestroy {
   private _subs = new Subscription();
 
   @ViewChild('profileMenu') profileMenu!: Menu;
+  @ViewChildren('mobileSuggestItem') mobileSuggestItems!: QueryList<ElementRef<HTMLElement>>;
+  @ViewChildren('desktopSuggestItem') desktopSuggestItems!: QueryList<ElementRef<HTMLElement>>;
 
   constructor(private router: Router, private cart: CartService, private auth: AuthService, private productService: ProductService) {}
 
@@ -56,9 +58,11 @@ export class NavbarComponent implements OnDestroy {
       e.preventDefault();
       this.selectedSuggestionIndex = Math.min(this.selectedSuggestionIndex + 1, this.suggestions.length - 1);
       this.searchHasFocus = true;
+      this.scrollActiveSuggestionIntoView();
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       this.selectedSuggestionIndex = Math.max(this.selectedSuggestionIndex - 1, -1);
+      this.scrollActiveSuggestionIntoView();
     } else if (e.key === 'Enter') {
       if (this.selectedSuggestionIndex >= 0 && this.selectedSuggestionIndex < this.suggestions.length) {
         e.preventDefault();
@@ -70,6 +74,30 @@ export class NavbarComponent implements OnDestroy {
       this.suggestions = [];
       this.selectedSuggestionIndex = -1;
     }
+  }
+
+  private scrollActiveSuggestionIntoView() {
+    if (this.selectedSuggestionIndex < 0) return;
+
+    const scrollList = (list?: QueryList<ElementRef<HTMLElement>>) => {
+      if (!list || list.length === 0) return;
+      const el = list.get(this.selectedSuggestionIndex)?.nativeElement;
+      if (!el) return;
+      const parent = el.parentElement;
+      if (!parent) return;
+
+      const parentRect = parent.getBoundingClientRect();
+      const elRect = el.getBoundingClientRect();
+
+      if (elRect.top < parentRect.top) {
+        parent.scrollTop -= (parentRect.top - elRect.top);
+      } else if (elRect.bottom > parentRect.bottom) {
+        parent.scrollTop += (elRect.bottom - parentRect.bottom);
+      }
+    };
+
+    scrollList(this.mobileSuggestItems);
+    scrollList(this.desktopSuggestItems);
   }
 
   onSearchFocus() {

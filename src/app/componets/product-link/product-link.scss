@@ -1,5 +1,22 @@
-/* Styles replaced by Tailwind utility classes in the template. Keep file to avoid missing stylesheet errors. */
-
 :host {
   display: block;
+}
+
+.product-link-image-wrap {
+  position: relative;
+}
+
+.product-link-image-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #7c3aed;
+  opacity: 0;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  transition: opacity 0.15s ease-out;
+}
+
+.product-link-card:hover .product-link-image-wrap::after {
+  opacity: 0.45;
 }

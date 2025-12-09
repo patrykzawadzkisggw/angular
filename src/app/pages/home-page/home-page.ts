@@ -33,6 +33,7 @@ export class HomePage implements OnInit, OnDestroy {
   private _subs = new Subscription();
   private _filtersUnsub?: () => void;
   isMobile = false;
+  private readonly homeAllowedCategories = ['Nabiał', 'Słodycze', 'Przekąski'];
  tags: SearchTag[] = [
   { name: 'Bezglutenowe', image: 'gluten.svg', category: 'Bezglutenowe' },
   { name: 'Herbaty', image: 'drink.svg', category: 'Herbaty' },
@@ -106,7 +107,8 @@ export class HomePage implements OnInit, OnDestroy {
         groups.get(cat)!.push(p);
       });
       const grouped = Array.from(groups.entries()).map(([name, products]) => ({ name, products }));
-      this._categories.next(grouped);
+      const limited = grouped.filter(g => this.homeAllowedCategories.includes(g.name));
+      this._categories.next(limited);
     });
 
     this._subs.add(s);

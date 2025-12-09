@@ -5,7 +5,23 @@
   }
 }
 
-/* Keep page scrollbar visible even when PrimeNG dialog adds p-overflow-hidden to body */
+
 ::ng-deep body.p-overflow-hidden {
   overflow: auto !important;
+}
+
+
+::ng-deep .p-galleria-thumbnail-item {
+  cursor: pointer;
+  opacity: 1 !important;
+  transition: none !important;
+}
+
+::ng-deep .p-galleria-thumbnail-item img {
+  pointer-events: none;
+}
+
+::ng-deep .p-galleria-thumbnail-item:hover,
+::ng-deep .p-galleria-thumbnail-item.p-galleria-thumbnail-item-current {
+  opacity: 1 !important;
 }

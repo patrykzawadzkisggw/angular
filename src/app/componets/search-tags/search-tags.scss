@@ -63,6 +63,28 @@
   font-weight: 500;
 }
 
+.tag-img-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.tag-img-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 100%;
+  background: #7c3aed;
+  opacity: 0;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  transition: opacity 0.15s ease-out;
+}
+
+.tag:hover .tag-img-wrap::after,
+.tag-mobile:hover .tag-img-wrap::after {
+  opacity: 0.45;
+}
+
 .tags-container-mobile {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));

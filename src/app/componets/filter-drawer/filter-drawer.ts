@@ -67,7 +67,15 @@ export class FilterDrawer implements OnInit, OnDestroy {
     this.filters = {};
     this.minPriceZl = '';
     this.maxPriceZl = '';
-    this.productService.setFilters({});
+
+    this.productService.setFilters({
+      minPrice: null,
+      maxPrice: null,
+      sort: undefined,
+      okazja: false,
+      inStock: false,
+      outOfStock: false
+    });
   }
 
   private parseZlToGrosze(input: string | number | undefined | null): number | null {

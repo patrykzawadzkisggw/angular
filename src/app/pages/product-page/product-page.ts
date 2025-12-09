@@ -9,9 +9,10 @@ import { DialogModule } from 'primeng/dialog';
 import { ProductService, ProductDetail } from '../../services/product-service';
 import { CartService } from '../../services/cart-service';
 import { AddInput } from '../../componets/add-input/add-input';
-import { Observable, of } from 'rxjs';
-import { switchMap, catchError, tap } from 'rxjs/operators';
+import { Observable, of, Subscription } from 'rxjs';
+import { switchMap, catchError, tap, map, distinctUntilChanged } from 'rxjs/operators';
 import { ProductLink } from '../../componets/product-link/product-link';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-product-page',
@@ -25,14 +26,21 @@ export class ProductPage {
   images: Array<{ itemImageSrc: string; thumbnailImageSrc: string }> = [];
   responsiveOptions: any[] = [];
   currentProduct: ProductDetail | null = null;
+  isMobile = false;
   showAddDialog = false;
   addQuantity = 1;
   addMax: number | undefined = undefined;
   selectedProduct: ProductDetail | null = null;
   showUnavailableDialog = false;
   showAddedDialog = false;
+  private _bpSub?: Subscription;
 
-  constructor(private route: ActivatedRoute, private productService: ProductService, private cart: CartService) {
+  constructor(
+    private route: ActivatedRoute,
+    private productService: ProductService,
+    private cart: CartService,
+    private breakpointObserver: BreakpointObserver
+  ) {
     this.responsiveOptions = [
       { breakpoint: '1024px', numVisible: 5 },
       { breakpoint: '768px', numVisible: 3 },
@@ -55,6 +63,16 @@ export class ProductPage {
     this.recommended$ = this.productService.getRecommended().pipe(
       catchError(() => of([]))
     );
+
+    this._bpSub = this.breakpointObserver
+      .observe(['(max-width: 767px)'])
+      .pipe(
+        map(r => r.matches),
+        distinctUntilChanged()
+      )
+      .subscribe(matches => {
+        this.isMobile = matches;
+      });
   }
 
   openAddDialog(p?: ProductDetail | null) {
@@ -125,5 +143,11 @@ export class ProductPage {
       }
       this.cart.addItem(item);
     } catch {}
+  }
+
+  ngOnDestroy() {
+    if (this._bpSub) {
+      this._bpSub.unsubscribe();
+    }
   }
 }
