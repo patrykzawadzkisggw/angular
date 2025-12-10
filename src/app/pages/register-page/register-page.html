@@ -1,5 +1,5 @@
 <p-card header="Rejestracja" class="max-w-96 mx-auto mt-32">
-    <form class="flex flex-col gap-6 pt-3" [formGroup]="registerForm">
+    <form class="flex flex-col gap-6 pt-3" [formGroup]="registerForm" (ngSubmit)="register()">
         <div class="flex flex-col gap-1">
             <p-floatlabel variant="in">
                 <input type="text" pInputText id="username" formControlName="username" fluid
@@ -42,8 +42,7 @@
             {{ formError }}
         </p-message>
         }
-        <button pButton type="button" label="Stwórz konto" (click)="register()">
-        </button>
+        <button pButton type="submit" label="Stwórz konto"></button>
 
     </form>
 </p-card>

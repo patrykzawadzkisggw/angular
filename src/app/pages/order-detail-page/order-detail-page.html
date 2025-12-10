@@ -12,7 +12,7 @@
 
     <div class="flex justify-between items-center">
         <h1 class="text-4xl font-semibold tracking-tight text-pretty">Szczegóły zamówienia</h1>
-        <p-tag severity="info" [value]="order.status" [rounded]="true" />
+        <p-tag class="whitespace-nowrap" severity="info" [value]="order.status" [rounded]="true" />
     </div>
 
     <p-card class="mt-4">
@@ -80,8 +80,8 @@
     </p-card>
 
     @if(order.status !== 'Anulowane' && order.status !== 'Dostarczone') {
-    <div class="">
-        <p-button (click)="showDialog()" label="Anuluj zamówienie" />
+    <div class="md:flex justify-center md:justify-end w-full">
+        <p-button (click)="showDialog()" label="Anuluj zamówienie" styleClass="w-full md:w-auto" />
     </div>
     }
 

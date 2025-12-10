@@ -92,13 +92,19 @@ export class SearchPage implements OnInit, OnDestroy {
 
         const filtered = this.productService.applyFilters(list as any[]);
         const groups = new Map<string, any[]>();
+        const isCategoryFiltered = !!category;
+        const displayCategoryName = String(category || '');
         (filtered || []).forEach((p) => {
           let cat = 'Inne';
           if (p) {
-            if (Array.isArray(p.categories) && p.categories.length) {
-              cat = String(p.categories[0]);
-            } else if ((p as any).category) {
-              cat = String((p as any).category);
+            if (isCategoryFiltered) {
+              cat = displayCategoryName || 'Inne';
+            } else {
+              if (Array.isArray(p.categories) && p.categories.length) {
+                cat = String(p.categories[0]);
+              } else if ((p as any).category) {
+                cat = String((p as any).category);
+              }
             }
           }
           if (!groups.has(cat)) groups.set(cat, []);
