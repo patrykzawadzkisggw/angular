@@ -62,10 +62,14 @@ export class CartPage {
         const progress = Math.min(100, Math.floor((subtotal / this.freeShippingThreshold) * 100)) || 0;
         const shipping = subtotal >= this.freeShippingThreshold ? 0 : this.shippingBelowThreshold;
         const before = subtotal + shipping;
-        const pct = discount?.percentage ?? 0;
-        const discountAmount = pct > 0 ? Math.round((before * pct) / 100) : 0;
-        const grandTotal = before - discountAmount;
-        return { subtotal, shipping, grandTotal, progress, missing, discountPct: pct, discountAmount };
+        const pct = Number(discount?.percentage ?? 0) || 0;
+        const beforeCents = Math.round(before * 100);
+        const pctPositive = Math.max(0, pct);
+        const discountCents = pctPositive > 0 ? Math.floor((beforeCents * pctPositive) / 100) : 0;
+        const discountAmount = discountCents / 100;
+        const grandTotal = (beforeCents - discountCents) / 100;
+
+        return { subtotal, shipping, grandTotal, progress, missing, discountPct: pctPositive, discountAmount };
       })
     );
 

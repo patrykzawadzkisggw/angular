@@ -86,7 +86,11 @@ export class ProductList implements OnDestroy {
       this.categories = groups || [];
       this._flatProducts = (groups || []).flatMap((g) => (g.products || []));
       this.tagsList = this.categories.map((g) => g.name);
-      this.filteredProducts$.next(this._flatProducts.slice());
+      if (this.isMobile) {
+        this.applyFilterToFlat();
+      } else {
+        this.filteredProducts$.next(this._flatProducts.slice());
+      }
     });
     this._dataSub.add(s);
   }
@@ -94,7 +98,11 @@ export class ProductList implements OnDestroy {
   public bindFlat(obs: Observable<any[]>) {
     const s = obs.subscribe((arr) => {
       this._flatProducts = arr || [];
-      this.filteredProducts$.next(this._flatProducts.slice());
+      if (this.isMobile) {
+        this.applyFilterToFlat();
+      } else {
+        this.filteredProducts$.next(this._flatProducts.slice());
+      }
       if (!this.categories || !this.categories.length) {
         const groups = new Map<string, any[]>();
         (this._flatProducts || []).forEach((p) => {

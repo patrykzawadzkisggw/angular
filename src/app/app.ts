@@ -3,10 +3,11 @@ import { RouterOutlet } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { Footer } from "./directives/footer";
 import { NavbarComponent } from './componets/navbar-component/navbar-component';
+import { CookieBanner } from './componets/cookie-banner/cookie-banner';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ButtonModule, Footer, NavbarComponent],
+  imports: [RouterOutlet, ButtonModule, Footer, NavbarComponent, CookieBanner],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

@@ -57,10 +57,15 @@ export class DeliveryPage {
         const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
         const shipping = subtotal >= this.freeShippingThreshold ? 0 : this.shippingBelowThreshold;
         const before = subtotal + shipping;
-        const pct = discount?.percentage ?? 0;
-        const discountAmount = pct > 0 ? Math.round((before * pct) / 100) : 0;
-        const grandTotal = before - discountAmount;
-        return { subtotal, shipping, grandTotal, discountPct: pct, discountAmount };
+        const pct = Number(discount?.percentage ?? 0) || 0;
+
+        const beforeCents = Math.round(before * 100);
+        const pctPositive = Math.max(0, pct);
+        const discountCents = pctPositive > 0 ? Math.floor((beforeCents * pctPositive) / 100) : 0;
+        const discountAmount = discountCents / 100;
+        const grandTotal = (beforeCents - discountCents) / 100;
+
+        return { subtotal, shipping, grandTotal, discountPct: pctPositive, discountAmount };
       })
     );
 
@@ -139,6 +144,13 @@ export class DeliveryPage {
       address: this.form.value.adres,
       items: items.map(i => ({ product_id: i.id, quantity: i.quantity }))
     };
+
+    try {
+      const disc = this.cart.getDiscountSnapshot();
+      if (disc && disc.code) {
+        (payload as any).promo_code = disc.code;
+      }
+    } catch {}
 
     this.isPlacingOrder = true;
     this.cart.createOrder(payload).subscribe({

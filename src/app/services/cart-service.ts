@@ -171,6 +171,7 @@ export class CartService {
     this.setItems([]);
     this.clearInvalidProductFlags();
     this.clearDeliveryInfo();
+    this.clearDiscount();
   }
 
   getTotal(): number {
@@ -293,6 +294,10 @@ export class CartService {
   clearDiscount() {
     this.discountSubject.next(null);
     this.saveDiscountToStorage(null);
+  }
+
+  getDiscountSnapshot(): { code: string; percentage: number } | null {
+    return this.discountSubject.getValue();
   }
 
   setDeliveryInfo(data: { first_name?: string; last_name?: string; postal_code?: string; city?: string; address?: string; promo_code?: string } | null) {
