@@ -1,10 +1,33 @@
 <div class="mt-10"></div>
-<h1 class="text-4xl font-semibold tracking-tight text-pretty sm:text-5xl">Zamówienia</h1>
-<app-filter-tag [tagsList]="tags" [selected]="selectedTags" (selectionChange)="onFilterChange($event)" />
-
-<div class="grid gap-5">
-@for(order of filteredOrders; track order.id) {
-    <app-orders-item [order]="order" />
+<h1 class="text-4xl font-semibold tracking-tight text-pretty">Zamówienia</h1>
+@if((orders.length || 0) !== 0) {
+    <app-filter-tag [tagsList]="tags" [selected]="selectedTags" (selectionChange)="onFilterChange($event)" />
 }
-</div>
+
+@if ((loading)) {
+    <div class="w-full h-40 flex items-center justify-center">
+        <div class="text-center">
+            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-violet-600"></div>
+            <div class="mt-3 text-gray-600">Ładowanie zamówień...</div>
+        </div>
+    </div>
+} @else {
+    @if ((error)) {
+        <div class="w-full p-6 text-center text-red-600">{{ error }}</div>
+    } @else {
+        @if ((orders.length || 0) === 0) {
+            <div class="w-full p-6 text-center text-gray-600">Nie złożyłeś jeszcze żadnego zamówienia.</div>
+        } @else {
+            @if ((filteredOrders || []).length === 0) {
+                <div class="w-full p-6 text-center text-gray-600">Nie znaleziono zamówień pasujących do wybranych filtrów.</div>
+            } @else {
+                <div class="grid gap-5">
+                    @for(order of filteredOrders; track order.id) {
+                        <app-orders-item [order]="order" />
+                    }
+                </div>
+            }
+        }
+    }
+}
 

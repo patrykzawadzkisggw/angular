@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { OrderService } from './order-service';
 
 type TokenResponse = { token: string };
 
@@ -12,7 +13,7 @@ export class AuthService {
   private readonly baseUrl = environment.apiUrl;
   private readonly storageKey = 'auth_token';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private injector: Injector) {}
 
   register(email: string, password: string): Observable<string> {
     const body = { login: email, password };
@@ -27,6 +28,11 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<string> {
+    try {
+      const orderService = this.injector.get(OrderService as any) as OrderService | null;
+      orderService?.clearCache();
+    } catch {}
+
     const body = { login: email, password };
     return this.http
       .post<TokenResponse>(`${this.baseUrl}/login`, body, {

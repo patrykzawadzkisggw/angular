@@ -10,7 +10,7 @@ import { ProductService, ProductDetail } from '../../services/product-service';
 import { CartService } from '../../services/cart-service';
 import { AddInput } from '../../componets/add-input/add-input';
 import { Observable, of, Subscription } from 'rxjs';
-import { switchMap, catchError, tap, map, distinctUntilChanged } from 'rxjs/operators';
+import { switchMap, catchError, tap, map, distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { ProductLink } from '../../componets/product-link/product-link';
 import { BreakpointObserver } from '@angular/cdk/layout';
 
@@ -58,7 +58,8 @@ export class ProductPage {
         this.images = Array.isArray(p?.images)
           ? p!.images.map((img) => ({ itemImageSrc: img, thumbnailImageSrc: img }))
           : [];
-      })
+      }),
+      shareReplay(1)
     );
     this.recommended$ = this.productService.getRecommended().pipe(
       catchError(() => of([]))

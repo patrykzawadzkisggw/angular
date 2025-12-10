@@ -47,6 +47,8 @@ export interface OrderDetail {
   postal_code?: string;
   address?: string;
   promo_code?: string;
+  delivery_cents?: number;
+  discount_cents?: number;
 }
 
 @Injectable({

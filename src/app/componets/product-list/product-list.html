@@ -15,30 +15,24 @@
       <div class="w-full p-6 text-center text-gray-600">Nie znaleziono produktów spełniających wskazane kryteria.</div>
     } @else {
       <div class="grid grid-cols-2 gap-5 p-5 pl-0 pr-0">
-        @for(product of displayedProducts; track product.id) {
+        @for(product of (filteredProducts$ | async); track product.id) {
           <app-product-link [product]="product" />
         }
       </div>
-      @if ((((filteredProducts$ | async) || []).length || 0) > (displayedProducts.length || 0)) {
-        <div class="text-center py-4 text-sm text-gray-500">Przewiń, aby załadować więcej produktów…</div>
-      }
     }
   } @else {
     @if ((categories)?.length === 0) {
       <div class="w-full p-6 text-center text-gray-600">Nie znaleziono produktów spełniających wskazane kryteria.</div>
     } @else {
-      @for(category of displayedCategories; track category.name) {
-          <section class="recommendations mb-8">
-            <h2 class="mb-1 text-3xl font-semibold tracking-tight text-gray-900 ">{{ category.name }}</h2>
-            <div class="grid grid-cols-3 lg:grid-cols-4 gap-5 p-5 pl-0 pr-0">
-              @for(product of (category.products); track product.id) {
-                <app-product-link [product]="product" />
-              }
-            </div>
-          </section>
-        }
-      @if ((categories.length || 0) > (displayedCategories.length || 0)) {
-        <div class="text-center py-6 text-sm text-gray-500">Przewiń, aby załadować więcej kategorii…</div>
+      @for(category of categories; track category.name) {
+        <section class="recommendations mb-8">
+          <h2 class="mb-1 text-3xl font-semibold tracking-tight text-gray-900 ">{{ category.name }}</h2>
+          <div class="grid grid-cols-3 lg:grid-cols-4 gap-5 p-5 pl-0 pr-0">
+            @for(product of (category.products); track product.id) {
+              <app-product-link [product]="product" />
+            }
+          </div>
+        </section>
       }
     }
   }

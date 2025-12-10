@@ -20,3 +20,17 @@
 .product-link-card:hover .product-link-image-wrap::after {
   opacity: 0.45;
 }
+
+@media(max-width: 400px) {
+
+.product-link-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: normal;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+  min-height: 2.5em;
+}
+}

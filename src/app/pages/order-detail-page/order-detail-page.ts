@@ -66,7 +66,6 @@ export class OrderDetailPage implements OnInit {
       }
 
   const nav = this.router.getCurrentNavigation();
-  // Only force reload on first load / external navigation if we don't already have a cache.
   const forceReload = !this.orderService.hasCache() && nav == null;
 
       this.loading = true;
@@ -75,9 +74,9 @@ export class OrderDetailPage implements OnInit {
           next: (o: OrderDetail) => {
             this.order = o;
             const productsCents = (o.items || []).reduce((s: number, it: any) => s + (it.price_cents || 0) * (it.quantity || 0), 0);
-          const discountCents = Math.max(0, productsCents - (o.total_cents || 0));
-          const shippingCents = (o.total_cents || 0) < 30000 ? 1500 : 0;
-          const totalWithShippingCents = (o.total_cents || 0) + shippingCents;
+          const discountCents = o.discount_cents || 0;
+          const shippingCents = o.delivery_cents || 0;
+          const totalWithShippingCents = (o.total_cents || 0);
           this.summary = [
             { label: 'Produkty', value: productsCents / 100, isBold: false },
             { label: 'Dostawa', value: shippingCents / 100, isBold: false },

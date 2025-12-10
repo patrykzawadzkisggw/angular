@@ -1,5 +1,4 @@
-/* Reserve aspect ratio and place placeholder SVG behind images to avoid layout shift */
-.galleria-img-wrap { position: relative; width: 100%; /* reserve aspect ratio 1000x491 => 49.1% */ padding-top: 49.1%; overflow: hidden; background: #f7f7f7; }
+.galleria-img-wrap { position: relative; width: 100%;  padding-top: 49.1%; overflow: hidden; background: #f7f7f7; }
 .galleria-img-wrap .galleria-placeholder { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; }
 .galleria-img-wrap .galleria-real { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: contain; display: block; transition: opacity .2s ease; }
 
