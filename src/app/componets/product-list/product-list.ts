@@ -68,7 +68,6 @@ export class ProductList implements OnDestroy {
         this.selectedTags = parsed.map((v) => String(v));
       }
     } catch {
-      // ignore storage errors
     }
   }
 
@@ -78,7 +77,6 @@ export class ProductList implements OnDestroy {
       const val = this.selectedTags && this.selectedTags.length ? this.selectedTags : ['Wszystkie'];
       window.sessionStorage.setItem(this.TAGS_STORAGE_KEY, JSON.stringify(val));
     } catch {
-      // ignore storage errors
     }
   }
 

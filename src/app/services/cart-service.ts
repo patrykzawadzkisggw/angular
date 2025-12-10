@@ -110,7 +110,6 @@ export class CartService {
     return this.http.post<CreateOrderResponse>(`${this.baseUrl}/orders`, payload, { headers }).pipe(
       tap(() => {
         try {
-          // After successful order we decrement cached stock values so UI reflects availability
           if (payload && Array.isArray((payload as any).items) && (payload as any).items.length) {
             const adjustments = (payload as any).items.map((it: any) => ({ product_id: Number(it.product_id), quantity: Number(it.quantity) }));
             this.productService.deductStockForOrder(adjustments);

@@ -34,6 +34,7 @@ export class ProductPage {
   showUnavailableDialog = false;
   showAddedDialog = false;
   private _bpSub?: Subscription;
+  private _subs = new Subscription();
 
   constructor(
     private route: ActivatedRoute,
@@ -46,7 +47,9 @@ export class ProductPage {
       { breakpoint: '768px', numVisible: 3 },
       { breakpoint: '560px', numVisible: 1 }
     ];
+  }
 
+  ngOnInit() {
     this.product$ = this.route.paramMap.pipe(
       switchMap(params => {
         const id = Number(params.get('id')) || 0;
@@ -61,11 +64,12 @@ export class ProductPage {
       }),
       shareReplay(1)
     );
+
     this.recommended$ = this.productService.getRecommended().pipe(
       catchError(() => of([]))
     );
 
-    this._bpSub = this.breakpointObserver
+    const bpSub = this.breakpointObserver
       .observe(['(max-width: 767px)'])
       .pipe(
         map(r => r.matches),
@@ -74,6 +78,8 @@ export class ProductPage {
       .subscribe(matches => {
         this.isMobile = matches;
       });
+
+    this._subs.add(bpSub);
   }
 
   openAddDialog(p?: ProductDetail | null) {
@@ -109,7 +115,6 @@ export class ProductPage {
     const qty = Math.max(0, Math.floor(this.addQuantity || 0));
     if (qty <= 0) return;
     if (this.addMax !== undefined && qty > this.addMax) {
-      // safety check
       this.addQuantity = this.addMax;
       return;
     }
@@ -147,8 +152,6 @@ export class ProductPage {
   }
 
   ngOnDestroy() {
-    if (this._bpSub) {
-      this._bpSub.unsubscribe();
-    }
+    this._subs.unsubscribe();
   }
 }

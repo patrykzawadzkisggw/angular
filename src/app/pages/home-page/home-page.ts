@@ -66,8 +66,6 @@ export class HomePage implements OnInit, OnDestroy {
 
   constructor(private productService: ProductService, private breakpointObserver: BreakpointObserver) {
     this.categories$ = this._categories.asObservable() as Observable<{ name: string; products: any[] }[]>;
-    this._filtersUnsub = this.productService.subscribeFilters(() => this.loadAll());
-    this.loadAll();
   }
 
   ngOnInit() {
@@ -79,6 +77,8 @@ export class HomePage implements OnInit, OnDestroy {
       });
 
     this._subs.add(bpSub);
+    this._filtersUnsub = this.productService.subscribeFilters(() => this.loadAll());
+    this.loadAll();
   }
 
   private startLoading() {

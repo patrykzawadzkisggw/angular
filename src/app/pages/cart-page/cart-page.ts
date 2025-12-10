@@ -14,7 +14,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { InputOtpModule } from 'primeng/inputotp';
 import { ProductLink } from '../../componets/product-link/product-link';
 import { CartService, CartItem } from '../../services/cart-service';
-import { map, Observable, combineLatest, catchError, of } from 'rxjs';
+import { map, Observable, combineLatest, catchError, of, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cart-page',
@@ -23,6 +23,7 @@ import { map, Observable, combineLatest, catchError, of } from 'rxjs';
   styleUrl: './cart-page.scss'
 })
 export class CartPage {
+  private _subs = new Subscription();
   cartItems$!: Observable<CartItem[]>;
   recommended$!: Observable<any[]>;
   amounts$!: Observable<{ subtotal: number; shipping: number; grandTotal: number; progress: number; missing: number; discountPct?: number; discountAmount?: number }>;
@@ -35,55 +36,7 @@ export class CartPage {
 
   productNameById = new Map<number, string>();
 
-  constructor(private router: Router, public cart: CartService, private productService: ProductService) {
-    this.cartItems$ = this.cart.items$;
-    this.amounts$ = combineLatest([this.cartItems$, this.cart.discount$]).pipe(
-      map(([items, discount]) => {
-        const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-        const missing = Math.max(0, this.freeShippingThreshold - subtotal);
-        const progress = Math.min(100, Math.floor((subtotal / this.freeShippingThreshold) * 100)) || 0;
-        const shipping = subtotal >= this.freeShippingThreshold ? 0 : this.shippingBelowThreshold;
-        const before = subtotal + shipping;
-        const pct = discount?.percentage ?? 0;
-        const discountAmount = pct > 0 ? Math.round((before * pct) / 100) : 0;
-        const grandTotal = before - discountAmount;
-        return { subtotal, shipping, grandTotal, progress, missing, discountPct: pct, discountAmount };
-      })
-    );
-    this.hasInvalid$ = this.cart.invalidIds$.pipe(map(set => set.size > 0));
-    this.cartItems$.subscribe(items => {
-      this.productNameById.clear();
-      for (const it of items) {
-        this.productNameById.set(it.id, it.name);
-      }
-    });
-
-    this.recommended$ = this.productService.getRecommended().pipe(
-      catchError(() => of([]))
-    );
-
-    this.cart.discount$.subscribe(d => {
-      this.discountApplied = !!(d && (d.percentage ?? 0) > 0);
-      this.couponCode = d?.code ?? '';
-    });
-
-
-    try {
-      const alreadyBootstrapped = !!(window as any).__appInitialBootstrapDone;
-      if (!alreadyBootstrapped) {
-        (window as any).__appInitialBootstrapDone = true;
-        const ids = this.cart.getItemsSnapshot().map(i => i.id);
-        if (ids.length) {
-          this.productService.getByIds(ids, true).subscribe({
-            next: (products) => {
-              try { this.cart.updateProductsMetadata(products as any); } catch (e) {}
-            },
-            error: () => {}
-          });
-        }
-      }
-    } catch {}
-  }
+  constructor(private router: Router, public cart: CartService, private productService: ProductService) {}
 
   showCouponDialog = false;
   showInvalidCouponDialog = false;
@@ -100,6 +53,59 @@ export class CartPage {
       this.showInsufficientDialog = true;
       this.insufficientDetails = Array.isArray(st.details) ? st.details : [];
     }
+
+    this.cartItems$ = this.cart.items$;
+    this.amounts$ = combineLatest([this.cartItems$, this.cart.discount$]).pipe(
+      map(([items, discount]) => {
+        const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+        const missing = Math.max(0, this.freeShippingThreshold - subtotal);
+        const progress = Math.min(100, Math.floor((subtotal / this.freeShippingThreshold) * 100)) || 0;
+        const shipping = subtotal >= this.freeShippingThreshold ? 0 : this.shippingBelowThreshold;
+        const before = subtotal + shipping;
+        const pct = discount?.percentage ?? 0;
+        const discountAmount = pct > 0 ? Math.round((before * pct) / 100) : 0;
+        const grandTotal = before - discountAmount;
+        return { subtotal, shipping, grandTotal, progress, missing, discountPct: pct, discountAmount };
+      })
+    );
+
+    this.hasInvalid$ = this.cart.invalidIds$.pipe(map(set => set.size > 0));
+
+    this._subs.add(this.cartItems$.subscribe(items => {
+      this.productNameById.clear();
+      for (const it of items) {
+        this.productNameById.set(it.id, it.name);
+      }
+    }));
+
+    this.recommended$ = this.productService.getRecommended().pipe(
+      catchError(() => of([]))
+    );
+
+    this._subs.add(this.cart.discount$.subscribe(d => {
+      this.discountApplied = !!(d && (d.percentage ?? 0) > 0);
+      this.couponCode = d?.code ?? '';
+    }));
+
+    try {
+      const alreadyBootstrapped = !!(window as any).__appInitialBootstrapDone;
+      if (!alreadyBootstrapped) {
+        (window as any).__appInitialBootstrapDone = true;
+        const ids = this.cart.getItemsSnapshot().map(i => i.id);
+        if (ids.length) {
+          this._subs.add(this.productService.getByIds(ids, true).subscribe({
+            next: (products) => {
+              try { this.cart.updateProductsMetadata(products as any); } catch (e) {}
+            },
+            error: () => {}
+          }));
+        }
+      }
+    } catch {}
+  }
+
+  ngOnDestroy() {
+    this._subs.unsubscribe();
   }
 
   isInvalid(id: number): boolean {

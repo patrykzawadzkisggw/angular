@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { ProductService } from '../../services/product-service';
@@ -14,7 +14,7 @@ import {  finalize, filter } from 'rxjs/operators';
   templateUrl: './search-page.html',
   styleUrl: './search-page.scss'
 })
-export class SearchPage implements OnDestroy {
+export class SearchPage implements OnInit, OnDestroy {
   categories$!: Observable<{ name: string; products: any[] }[]>;
   private _categoriesSubject = new BehaviorSubject<{ name: string; products: any[] }[] | null>(null);
   loading$ = new BehaviorSubject<boolean>(false);
@@ -39,13 +39,15 @@ export class SearchPage implements OnDestroy {
   filterVisible = false;
 
   constructor(private route: ActivatedRoute, private productService: ProductService, private router: Router) {
+  }
+
+  ngOnInit(): void {
     this.categories$ = this._categoriesSubject.asObservable() as Observable<{ name: string; products: any[] }[]>;
+
     const navSub = this.router.events.pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd)).subscribe(() => {
       this.performSearchFromRoute();
     });
-
     this._subs.add(navSub);
-
 
     const unsub = this.productService.subscribeFilters(() => this.performSearchFromRoute());
     this._subs.add({ unsubscribe: unsub } as Subscription);
